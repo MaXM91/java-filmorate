@@ -19,11 +19,8 @@ public class FilmController {
     private static final HashMap<Integer, Film> films = new HashMap<>();
 
     @PostMapping
-    public Film addFilm(@RequestBody @Valid Film film) throws ValidationException, IdNotNullException {
-        if (new ArrayList<>(films.values()).stream().anyMatch(u -> u.getName().equals(film.getName())) && !films.isEmpty()) {
-            log.debug("Фильм с таким названием {} зарегистрирован", film.getName());
-            throw new ValidationException("Фильм с таким названием зарегистрирован");
-        } else if (film.getId() != 0) {
+    public Film addFilm(@RequestBody @Valid Film film) throws IdNotNullException {
+        if (film.getId() != 0) {
             log.debug("Фильм при регистрации должен быть равен 0, а не {}", film.getId());
             throw new IdNotNullException("Регистрация фильма с аномальным значением поля id");
         }
