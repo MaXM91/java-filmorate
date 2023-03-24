@@ -1,58 +1,65 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validators.exceptions.IdNotNullException;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private int userId = 1;
-    private static final HashMap<Integer, User> users = new HashMap<>();
+    UserService userService;
+
+    @Autowired
+    UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
-    public User addUser(@RequestBody @Valid User user) throws ValidationException, IdNotNullException {
-        if (new ArrayList<>(users.values()).stream().anyMatch(u -> u.getLogin().equals(user.getLogin())) && !users.isEmpty()) {
-            log.debug("Пользователь с таким логином {} зарегистрирован", user.getLogin());
-            throw new ValidationException("Пользователь с таким логином зарегистрирован");
-        } else if (user.getId() != 0) {
-            log.debug("Фильм при регистрации должен быть равен 0, а не {}", user.getId());
-            throw new IdNotNullException("Регистрация пользователя с аномальным значением поля id");
-        }
-        if (user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-
-        user.setId(userId++);
-        users.put(user.getId(), user);
-        return user;
-
+    public User addUser(@RequestBody @Valid User user) {
+        return userService.create(user);
     }
 
     @PutMapping
-    public User updateUser(@RequestBody @Valid User user) throws ValidationException {
-        if (!users.containsKey(user.getId())) {
-            throw new ValidationException("User not found");
-        }
+    public User updateUser(@RequestBody @Valid User user) {
+        return userService.update(user);
+    }
 
-        if (user.getName().isEmpty() || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+    @DeleteMapping("/{id}")
+    public User deleteUser(@PathVariable Integer id) {
+        return userService.delete(id);
+    }
 
-        users.put(user.getId(), user);
-        return user;
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Integer id) {
+        return userService.found(id);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable Integer id) {
+        return userService.getFriends(id);
     }
 
     @GetMapping
     public List<User> getAllUsers() {
-        return new ArrayList<>(users.values());
+        return userService.get();
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public boolean addFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        return userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public boolean deleteFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getMutualFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
+        return userService.getMutualFriends(id, otherId);
     }
 }
