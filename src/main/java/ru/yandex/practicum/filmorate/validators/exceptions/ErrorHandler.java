@@ -22,7 +22,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)                          // 500
-    public ErrorResponse badWork(final Throwable exc) {
-        return new ErrorResponse("Произошла непредвиденная ошибка.");
+    public ErrorResponse badWork(final Exception exc) {
+        return new ErrorResponse(exc.getMessage());
     }
 }

@@ -102,51 +102,50 @@ public class UserService {
 
 //Work with friend list of users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    public boolean addFriend(Integer id1, Integer id2) throws ObjectNotFoundException {
+    public boolean addFriend(Integer id, Integer idFriend) throws ObjectNotFoundException {
 
-        if (userStorage.found(id1) == null || userStorage.found(id2) == null) {
-            log.info("Не найден один из юзеров при добавлении в друзья {} {}", id1, id2);
+        if (userStorage.found(id) == null || userStorage.found(idFriend) == null) {
+            log.info("Не найден один из юзеров при добавлении в друзья {} {}", id, idFriend);
             throw new ObjectNotFoundException("UserService/addFriend: user not found!");
         }
 
-        userStorage.addFriend(id1, id2);
+        userStorage.addFriend(id, idFriend);
         return true;
     }
 
-    public boolean deleteFriend(Integer id1, Integer id2) throws ObjectNotFoundException, ValidationException {
-        if (id1 == null || id1 <= 0 || id2 == null || id2 <= 0) {
-            log.info("Удаление из друзей с неформатными ид {} {}", id1, id2);
+    public boolean deleteFriend(Integer id, Integer idFriend) throws ObjectNotFoundException, ValidationException {
+        if (id == null || id <= 0 || idFriend == null || idFriend <= 0) {
+            log.info("Удаление из друзей с неформатными ид {} {}", id, idFriend);
             throw new ValidationException("UserService/deleteFriends: id user null or <= 0");
         }
 
-        if (userStorage.found(id1) == null || userStorage.found(id2) == null) {
-            log.info("Не найден один из юзеров при удалении из друзей {} {}", id1, id2);
+        if (userStorage.found(id) == null || userStorage.found(idFriend) == null) {
+            log.info("Не найден один из юзеров при удалении из друзей {} {}", id, idFriend);
             throw new ObjectNotFoundException("UserService/deleteFriend: user not found!");
         }
 
-        userStorage.deleteFriend(id1, id2);
+        userStorage.deleteFriend(id, idFriend);
         return true;
     }
 
-    public List<User> getMutualFriends(Integer id1, Integer id2) throws ObjectNotFoundException, ValidationException {
+    public List<User> getMutualFriends(Integer id, Integer otherId) throws ObjectNotFoundException, ValidationException {
         List<User> mutualFriends = new ArrayList<>();
 
-        if (id1 == null || id1 <= 0 || id2 == null || id2 <= 0) {
-            log.info("Вывод общих друзей с неформатными ид {} {}", id1, id2);
+        if (id == null || id <= 0 || otherId == null || otherId <= 0) {
+            log.info("Вывод общих друзей с неформатными ид {} {}", id, otherId);
             throw new ValidationException("UserService/getMutualFriends: id user null or <= 0");
         }
 
-        if (userStorage.found(id1) == null || userStorage.found(id2) == null) {
-            log.info("Не найден один из юзеров при выводе общих друзей {} {}", id1, id2);
+        if (userStorage.found(id) == null || userStorage.found(otherId) == null) {
+            log.info("Не найден один из юзеров при выводе общих друзей {} {}", id, otherId);
             throw new ObjectNotFoundException("UserService/getMutualFriends: user not found!");
         }
 
-        for (Integer id : userStorage.found(id1).getUserFriends()) {
-            if (userStorage.found(id2).getUserFriends().contains(id)) {
-                mutualFriends.add(userStorage.found(id));
+        for (Integer friendsId : userStorage.found(id).getUserFriends()) {
+            if (userStorage.found(otherId).getUserFriends().contains(friendsId)) {
+                mutualFriends.add(userStorage.found(friendsId));
             }
         }
         return mutualFriends;
     }
-
 }

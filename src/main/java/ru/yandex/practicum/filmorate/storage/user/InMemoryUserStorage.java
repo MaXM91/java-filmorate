@@ -64,14 +64,14 @@ public class InMemoryUserStorage implements UserStorage {
 // Work with friends list
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public void addFriend(Integer id1, Integer id2) {
-        users.get(id1).setUserFriends(id2);
-        users.get(id2).setUserFriends(id1);
+    public void addFriend(Integer id, Integer idFriend) {
+        users.get(id).setUserFriends(idFriend);
+        users.get(idFriend).setUserFriends(id);
     }
 
     @Override
-    public void deleteFriend(Integer id1, Integer id2) {
-        users.get(id1).deleteUserFriends(id2);
-        users.get(id2).deleteUserFriends(id1);
+    public void deleteFriend(Integer id, Integer idFriend) {
+        users.get(id).deleteUserFriends(idFriend);
+        users.get(idFriend).deleteUserFriends(id);
     }
 }
