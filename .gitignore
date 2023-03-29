@@ -31,3 +31,21 @@ build/
 
 ### VS Code ###
 .vscode/
+
+*.class
+*.log
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+out/
+
+mvn
+.DS_Store
+
+*.db
+db/*
