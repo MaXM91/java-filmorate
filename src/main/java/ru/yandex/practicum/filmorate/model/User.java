@@ -4,17 +4,14 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class User {
 
     private int id;
 
-    private Set<Integer> userFriends = new HashSet<>();
+    private HashMap<Integer, Boolean> userFriends = new HashMap<>();
 
     @Email(message = "user: bad mail")
     private String email;
@@ -30,11 +27,11 @@ public class User {
     private LocalDate birthday;
 
     public void setUserFriends(Integer id) {
-        userFriends.add(id);
+        userFriends.put(id, false);
     }
 
     public List<Integer> getUserFriends() {
-        return new ArrayList<>(userFriends);
+        return new ArrayList<>(userFriends.keySet());
     }
 
     public void deleteUserFriends(Integer id) {

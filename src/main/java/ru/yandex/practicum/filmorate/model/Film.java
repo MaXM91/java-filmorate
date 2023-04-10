@@ -25,6 +25,9 @@ public class Film {
     @Size(max = 200, message = "film: description contains more then 200 char!")
     private String description;
 
+    private Genre genre;
+    private Rating rating;
+
     @MinimumDate(message = "film: release date is before then date_birth_cinema date!")
     private LocalDate releaseDate;
 
