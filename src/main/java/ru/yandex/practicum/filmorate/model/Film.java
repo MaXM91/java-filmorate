@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.validators.MinimumDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +12,21 @@ import java.util.Set;
 @Data
 public class Film {
     private static final LocalDate DATE_BIRTH_CINEMA = LocalDate.of(1895, 12, 25);
-    private Set<Integer> usersLike = new HashSet<>();
     private int id;
+
+    //Set<Integer> likes = new HashSet<>();
+
+    public Film(int id, String name, String description, List<Genre> genres, Mpa mpa, Integer rate,
+                LocalDate releaseDate, long duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.genres = genres;
+        this.mpa = mpa;
+        this.rate = rate;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+    }
 
     @NotBlank(message = "film: name is blank!")
     @NotEmpty(message = "film: name is empty!")
@@ -25,24 +37,23 @@ public class Film {
     @Size(max = 200, message = "film: description contains more then 200 char!")
     private String description;
 
-    private Genre genre;
-    private Rating rating;
+    private List<Genre> genres;
+
+    private Mpa mpa;
+
+    private Integer rate;
 
     @MinimumDate(message = "film: release date is before then date_birth_cinema date!")
     private LocalDate releaseDate;
 
     @Positive(message = "film: duration has a negative value")
     private long duration;
-
-    public void setUsersLike(Integer id) {
-        usersLike.add(id);
+/*
+    public void setUsersLike(Integer userId) {
+        likes.add(userId);
     }
 
-    public List<Integer> getUsersLike() {
-        return new ArrayList<>(usersLike);
-    }
-    public void deleteUsersLike(Integer id) {
-        usersLike.remove(id);
-    }
-
+    public void deleteUsersLike(Integer userId) {
+        likes.remove(userId);
+    }*/
 }

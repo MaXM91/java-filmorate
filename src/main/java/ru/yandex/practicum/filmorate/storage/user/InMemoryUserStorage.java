@@ -74,4 +74,16 @@ public class InMemoryUserStorage implements UserStorage {
         users.get(id).deleteUserFriends(idFriend);
         users.get(idFriend).deleteUserFriends(id);
     }
+
+    public List<User> getMutualFriends(Integer id, Integer otherId) {
+        List<User> mutualFriends = new ArrayList<>();
+
+        for (Integer friendsId : users.get(id).getUserFriends()) {
+            if (users.get(otherId).getUserFriends().contains(friendsId)) {
+                mutualFriends.add(users.get(friendsId));
+            }
+        }
+        return mutualFriends;
+    }
+
 }

@@ -10,4 +10,5 @@ public interface FilmStorage {
     Film delete(Integer id);
     Film found(Integer id);
     List<Film> get();
+    List<Film> popularFilms(long count);
 }

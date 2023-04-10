@@ -8,6 +8,13 @@ import java.util.*;
 
 @Data
 public class User {
+    public User(int id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
 
     private int id;
 
@@ -37,5 +44,4 @@ public class User {
     public void deleteUserFriends(Integer id) {
         userFriends.remove(id);
     }
-
 }

@@ -25,4 +25,12 @@ public class ErrorHandler {
     public ErrorResponse badWork(final Exception exc) {
         return new ErrorResponse(exc.getMessage());
     }
+/*
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)                                    // 400
+    public ErrorResponse SpringBootException(final SpringBootException exc) {
+        return new ErrorResponse(exc.getMessage());
+    }
+
+*/
 }
