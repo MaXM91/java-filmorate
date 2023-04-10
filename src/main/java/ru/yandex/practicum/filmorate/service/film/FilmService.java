@@ -2,29 +2,32 @@ package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.like.LikeService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.validators.exceptions.ValidationException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class FilmService {
 // Work with films
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    FilmStorage filmStorage;
-    UserService userService;
+
+    private final FilmStorage filmStorage;
+    private final UserService userService;
+    private final LikeService likeService;
 
     @Autowired
-    FilmService(InMemoryFilmStorage filmStorage, UserService userService) {
+    public FilmService(@Qualifier("FilmDbStorage") FilmStorage filmStorage, UserService userService, LikeService likeService) {
         this.filmStorage = filmStorage;
         this.userService = userService;
+        this.likeService = likeService;
     }
 
     public Film create(Film film) throws ValidationException {
@@ -57,7 +60,7 @@ public class FilmService {
 
         if (filmStorage.found(id) == null) {
             log.info("При поиске не найден фильм с ид {}", id);
-            throw new ObjectNotFoundException("FilmService/delete: film not found!");
+            throw new ObjectNotFoundException("FilmService/getFilm: film not found!");
         }
 
         return filmStorage.found(id);
@@ -80,7 +83,7 @@ public class FilmService {
             throw new ObjectNotFoundException("film/addLike: user not found!");
         }
 
-        filmStorage.found(filmId).setUsersLike(userId);
+        likeService.addLike(filmId, userId);
         return true;
     }
 
@@ -95,19 +98,11 @@ public class FilmService {
             throw new ObjectNotFoundException("film/removeLike: user not found!");
         }
 
-        filmStorage.found(filmId).deleteUsersLike(userId);
+        likeService.removeLike(filmId, userId);
         return true;
     }
 
     public List<Film> popularFilms(long count) {
-        if (count <= 0) {
-            log.info("При выводе популярных фильмов не верное значение count {}", count);
-            throw new ValidationException("FilmService/popularFilms: bad count");
-        }
-
-        return filmStorage.get().stream()
-                .sorted((s1, s2) -> Integer.compare(s2.getUsersLike().size(), s1.getUsersLike().size()))
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.popularFilms(count);
     }
 }
