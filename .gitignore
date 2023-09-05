@@ -5,6 +5,7 @@ HELP.md
 !**/src/test/**/target/
 !**/src/mvnw
 !**/src/mvnw.cmd
+!**/src/checkstyle.xml
 
 ### STS ###
 .apt_generated
