@@ -25,5 +25,4 @@ public class ErrorHandler {
     public ErrorResponse badWork(final Exception exc) {
         return new ErrorResponse(exc.getMessage());
     }
-
 }

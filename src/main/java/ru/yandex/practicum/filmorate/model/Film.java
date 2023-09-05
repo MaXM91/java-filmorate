@@ -12,17 +12,6 @@ public class Film {
     private static final LocalDate DATE_BIRTH_CINEMA = LocalDate.of(1895, 12, 25);
     private int id;
 
-    public Film(int id, String name, String description, List<Genre> genres, Mpa mpa, Integer rate,
-                LocalDate releaseDate, long duration) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.genres = genres;
-        this.mpa = mpa;
-        this.rate = rate;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-    }
 
     @NotBlank(message = "film: name is blank!")
     @NotEmpty(message = "film: name is empty!")
@@ -45,4 +34,15 @@ public class Film {
     @Positive(message = "film: duration has a negative value")
     private long duration;
 
+    public Film(int id, String name, String description, List<Genre> genres, Mpa mpa, Integer rate,
+                LocalDate releaseDate, long duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.genres = genres;
+        this.mpa = mpa;
+        this.rate = rate;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+    }
 }
