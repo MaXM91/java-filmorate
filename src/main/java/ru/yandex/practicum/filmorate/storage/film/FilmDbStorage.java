@@ -31,7 +31,8 @@ public class FilmDbStorage implements FilmStorage {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO films (name, description, releaseDate, duration) values (?, ?, ?, ?)", new String[]{"id"});
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO films (name," +
+                    " description, releaseDate, duration) values (?, ?, ?, ?)", new String[]{"id"});
             preparedStatement.setString(1, film.getName());
             preparedStatement.setString(2, film.getDescription());
             preparedStatement.setDate(3, Date.valueOf(film.getReleaseDate()));
@@ -55,7 +56,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film update(Film film) {
 
-        jdbcTemplate.update("UPDATE films SET name = ?, description = ?, releasedate = ?, duration = ? WHERE id = ?",
+        jdbcTemplate.update("UPDATE films SET name = ?, description = ?, releasedate = ?," +
+                        " duration = ? WHERE id = ?",
                 film.getName(),
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
@@ -93,7 +95,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film found(Integer id) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM films WHERE id = ?", (rs, rowNum) -> new Film(rs.getInt("id"),
+            return jdbcTemplate.queryForObject("SELECT * FROM films WHERE id = ?"
+                    , (rs, rowNum) -> new Film(rs.getInt("id"),
                     rs.getString("name"),
                     rs.getString("description"),
                     readFilmGenre(rs.getInt("id")),
@@ -116,8 +119,7 @@ public class FilmDbStorage implements FilmStorage {
                 readFilmMpa(rs.getInt("id")),
                 readUsersLike(rs.getInt("id")),
                 rs.getDate("releaseDate").toLocalDate(),
-                rs.getInt("duration")
-        ));
+                rs.getInt("duration")));
     }
 
     @Override
@@ -154,9 +156,11 @@ public class FilmDbStorage implements FilmStorage {
             } else {                                       //
                 changeRepeat.add(genre.getId());           //
             }                                              //
-            jdbcTemplate.update("INSERT INTO film_genre (film_id, genre_id) VALUES(?,?)", film.getId(), genre.getId()); // Ввести пару
+            jdbcTemplate.update("INSERT INTO film_genre (film_id, genre_id) VALUES(?,?)",
+                    film.getId(), genre.getId()); // Ввести пару
 
-            Genre fullGenre = jdbcTemplate.queryForObject("SELECT * FROM genre WHERE genre_id = ?", (rs, rowNum) -> new Genre(rs.getInt("genre_id"),
+            Genre fullGenre = jdbcTemplate.queryForObject("SELECT * FROM genre WHERE genre_id = ?",
+                    (rs, rowNum) -> new Genre(rs.getInt("genre_id"),
                     rs.getString("name")), genre.getId());
 
             newList.add(fullGenre);
@@ -192,9 +196,12 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Mpa changeFilmMpa(Film film) {
-        jdbcTemplate.update("INSERT INTO film_mpa (film_id, mpa_id) VALUES(?, ?)", film.getId(), film.getMpa().getId());
+        jdbcTemplate.update("INSERT INTO film_mpa (film_id, mpa_id) VALUES(?, ?)",
+                film.getId(), film.getMpa().getId());
 
-        return jdbcTemplate.queryForObject("SELECT * FROM mpa WHERE mpa_id = ?", (rs, rowNum) -> new Mpa(rs.getInt("Mpa_id"), rs.getString("name")), film.getMpa().getId());
+        return jdbcTemplate.queryForObject("SELECT * FROM mpa WHERE mpa_id = ?",
+                (rs, rowNum) -> new Mpa(rs.getInt("Mpa_id"), rs.getString("name")),
+                film.getMpa().getId());
     }
 
     private Mpa readFilmMpa(Integer id) {
@@ -214,7 +221,8 @@ public class FilmDbStorage implements FilmStorage {
 
     private Integer readUsersLike(Integer filmId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT COUNT(user_id) AS c FROM likes WHERE film_id = ?", (rs, rowNum) -> (rs.getInt("c")), filmId);
+            return jdbcTemplate.queryForObject("SELECT COUNT(user_id) AS c FROM likes WHERE film_id = ?",
+                    (rs, rowNum) -> (rs.getInt("c")), filmId);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
