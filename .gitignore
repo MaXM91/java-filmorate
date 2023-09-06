@@ -8,17 +8,13 @@
 *.zip
 *.tar.gz
 *.rar
-*.db
 hs_err_pid*
 out/
 target/
-mvn
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-!**/src/mvnw
-!**/src/mvnw.cmd
-!db/
+
 ### STS ###
 .apt_generated
 .classpath
@@ -46,4 +42,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+*.db
 db/*
