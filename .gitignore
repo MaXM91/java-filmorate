@@ -1,3 +1,4 @@
+*.DS_Store
 *.class
 *.log
 *.jar
@@ -7,9 +8,11 @@
 *.zip
 *.tar.gz
 *.rar
+*.db
 hs_err_pid*
 out/
 target/
+mvn
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -43,6 +46,4 @@ build/
 
 ### VS Code ###
 .vscode/
-
-*.db
 db/*
