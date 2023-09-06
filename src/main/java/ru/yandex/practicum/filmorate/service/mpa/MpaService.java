@@ -10,13 +10,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MpaService {
-    private final MpaDbStorage mpaDbStorage;
+	private final MpaDbStorage mpaDbStorage;
 
-    public Mpa getMpaById(Integer id) {
-        return mpaDbStorage.found(id);
-    }
+	public Mpa getMpaById(Integer id) {
+		return mpaDbStorage.found(id);
+	}
 
-    public List<Mpa> getAllMpa() {
-        return mpaDbStorage.get();
-    }
+	public List<Mpa> getAllMpa() {
+		return mpaDbStorage.get();
+	}
 }

@@ -9,13 +9,13 @@ import java.lang.annotation.RetentionPolicy;
 @Constraint(validatedBy = MinimumDateValidator.class)
 @Past
 public @interface MinimumDate {
-    String message() default "Date must not be before {value}";
+	String message() default "Date must not be before {value}";
 
-    Class<?>[] groups() default {};
+	Class<?>[] groups() default {};
 
-    Class<?>[] payload() default {};
+	Class<?>[] payload() default {};
 
-    String value() default "1895-12-28";                                       // Минимальное значение даты
+	String value() default "1895-12-28";                                       // Минимальное значение даты
 }
 
 /*

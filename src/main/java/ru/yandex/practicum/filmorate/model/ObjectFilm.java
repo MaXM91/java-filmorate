@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class ObjectFilm {
-    private int id;
+	private int id;
 
-    public ObjectFilm(int id) {
-        this.id = id;
-    }
+	public ObjectFilm(int id) {
+		this.id = id;
+	}
 
 }
