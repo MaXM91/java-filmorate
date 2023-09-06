@@ -9,10 +9,10 @@ import java.util.List;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
+    private static final HashMap<Integer, User> users = new HashMap<>();
     //Work with users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     private int userId = 1;
-    private static final HashMap<Integer, User> users = new HashMap<>();
 
     @Override
     public User create(User user) {

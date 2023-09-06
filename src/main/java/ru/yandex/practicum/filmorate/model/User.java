@@ -4,7 +4,9 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Data
 public class User {
@@ -26,23 +28,23 @@ public class User {
     @PastOrPresent(message = "user: bad data of birthday!")
     private LocalDate birthday;
 
-    public void setUserFriends(Integer id) {
-        userFriends.put(id, false);
-    }
-
-    public List<Integer> getUserFriends() {
-        return new ArrayList<>(userFriends.keySet());
-    }
-
-    public void deleteUserFriends(Integer id) {
-        userFriends.remove(id);
-    }
-
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
         this.email = email;
         this.login = login;
         this.name = name;
         this.birthday = birthday;
+    }
+
+    public List<Integer> getUserFriends() {
+        return new ArrayList<>(userFriends.keySet());
+    }
+
+    public void setUserFriends(Integer id) {
+        userFriends.put(id, false);
+    }
+
+    public void deleteUserFriends(Integer id) {
+        userFriends.remove(id);
     }
 }

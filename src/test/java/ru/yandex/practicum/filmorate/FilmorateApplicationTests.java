@@ -1,4 +1,3 @@
-
 package ru.yandex.practicum.filmorate;
 
 import lombok.RequiredArgsConstructor;
@@ -7,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -39,7 +37,7 @@ class FilmorateApplicationTests {
     private final LikeDbStorage likeStorage;
     private final GenreDbStorage genreStorage;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///	UserDbStorage///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Test
@@ -170,7 +168,7 @@ class FilmorateApplicationTests {
         LocalDate film13LocalDate = LocalDate.of(2016, 1, 22);
 
         Optional<Film> userOptional = Optional.ofNullable(filmStorage.create(new Film(0, "film13",
-                "film13", null,null , null ,film13LocalDate, 120)));
+                "film13", null, null, null, film13LocalDate, 120)));
 
         assertThat(userOptional)
                 .isPresent()
@@ -183,7 +181,7 @@ class FilmorateApplicationTests {
         LocalDate film1LocalDate = LocalDate.of(1995, 1, 22);
 
         Optional<Film> userOptional = Optional.ofNullable(filmStorage.update(new Film(1, "777update@bk.ru",
-                "update777", null, null,null, film1LocalDate, 777)));
+                "update777", null, null, null, film1LocalDate, 777)));
 
         assertThat(userOptional)
                 .isPresent()
@@ -215,19 +213,19 @@ class FilmorateApplicationTests {
         Optional<Film> filmOptional = Optional.ofNullable(filmStorage.found(7));
         List<Genre> genre7 = new ArrayList<>();
         genre7.add(new Genre(6, "Боевик"));
-        Mpa mpa7 = new Mpa(5,"NC-17");
+        Mpa mpa7 = new Mpa(5, "NC-17");
 
         assertThat(filmOptional)
                 .isPresent()
                 .hasValueSatisfying(film -> {
-                    assertThat(film).hasFieldOrPropertyWithValue("id", 7);
-                    assertThat(film).hasFieldOrPropertyWithValue("name", "name7");
-                    assertThat(film).hasFieldOrPropertyWithValue("description", "description7");
-                    assertEquals(film.getGenres(), genre7,"Список жанров не совпадает");
-                    assertThat(film).hasFieldOrPropertyWithValue("mpa", mpa7);
-                    assertThat(film).hasFieldOrPropertyWithValue("rate", 1);
-                    assertThat(film).hasFieldOrPropertyWithValue("releaseDate", film7LocalDate);
-                    assertThat(film).hasFieldOrPropertyWithValue("duration", 107L);
+                            assertThat(film).hasFieldOrPropertyWithValue("id", 7);
+                            assertThat(film).hasFieldOrPropertyWithValue("name", "name7");
+                            assertThat(film).hasFieldOrPropertyWithValue("description", "description7");
+                            assertEquals(film.getGenres(), genre7, "Список жанров не совпадает");
+                            assertThat(film).hasFieldOrPropertyWithValue("mpa", mpa7);
+                            assertThat(film).hasFieldOrPropertyWithValue("rate", 1);
+                            assertThat(film).hasFieldOrPropertyWithValue("releaseDate", film7LocalDate);
+                            assertThat(film).hasFieldOrPropertyWithValue("duration", 107L);
                         }
                 );
     }
@@ -254,27 +252,27 @@ class FilmorateApplicationTests {
         LocalDate film12LocalDate = LocalDate.of(1990, 2, 12);
         List<Genre> genre12 = new ArrayList<>();
         genre12.add(new Genre(1, "Комедия"));
-        Mpa mpa12 = new Mpa(3,"PG-13");
+        Mpa mpa12 = new Mpa(3, "PG-13");
 
         assertThat(filmOptional)
                 .isPresent()
                 .hasValueSatisfying(new Consumer<List<Film>>() {
-                                        @Override
-                                        public void accept(List<Film> film) {
-                                            Film filmTop = film.get(0);
-                                            assertThat(filmTop).hasFieldOrPropertyWithValue("id", 12);
-                                            assertThat(filmTop).hasFieldOrPropertyWithValue("name", "name12");
-                                            assertThat(filmTop).hasFieldOrPropertyWithValue("description", "description12");
-                                            assertEquals(filmTop.getGenres(), genre12, "Список жанров не совпадает");
-                                            assertThat(filmTop).hasFieldOrPropertyWithValue("mpa", mpa12);
-                                            assertThat(filmTop).hasFieldOrPropertyWithValue("rate", 3);
-                                            assertThat(filmTop).hasFieldOrPropertyWithValue("releaseDate", film12LocalDate);
-                                            assertThat(filmTop).hasFieldOrPropertyWithValue("duration", 112L);
-                                        }
-                                    });
+                    @Override
+                    public void accept(List<Film> film) {
+                        Film filmTop = film.get(0);
+                        assertThat(filmTop).hasFieldOrPropertyWithValue("id", 12);
+                        assertThat(filmTop).hasFieldOrPropertyWithValue("name", "name12");
+                        assertThat(filmTop).hasFieldOrPropertyWithValue("description", "description12");
+                        assertEquals(filmTop.getGenres(), genre12, "Список жанров не совпадает");
+                        assertThat(filmTop).hasFieldOrPropertyWithValue("mpa", mpa12);
+                        assertThat(filmTop).hasFieldOrPropertyWithValue("rate", 3);
+                        assertThat(filmTop).hasFieldOrPropertyWithValue("releaseDate", film12LocalDate);
+                        assertThat(filmTop).hasFieldOrPropertyWithValue("duration", 112L);
+                    }
+                });
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////MpaDbStorage///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Test
@@ -308,19 +306,20 @@ class FilmorateApplicationTests {
                     }
                 });
     }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////GenreDbStorage///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-@Test
-public void testFoundGenre() {
+    @Test
+    public void testFoundGenre() {
 
-    Optional<Genre> genreOptional = Optional.ofNullable(genreStorage.found(1));
-    Genre genreT = new Genre(1, "Комедия");
+        Optional<Genre> genreOptional = Optional.ofNullable(genreStorage.found(1));
+        Genre genreT = new Genre(1, "Комедия");
 
-    if (genreOptional.isPresent()) {
-        assertEquals(genreT, genreOptional.get(), "Данные mpa не соответствуют");
+        if (genreOptional.isPresent()) {
+            assertEquals(genreT, genreOptional.get(), "Данные mpa не соответствуют");
+        }
     }
-}
 
     @Test
     public void testGetGenre() {
@@ -342,7 +341,8 @@ public void testFoundGenre() {
                     }
                 });
     }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////LikeDbStorage///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Test
@@ -352,8 +352,8 @@ public void testFoundGenre() {
 
         Optional<Film> filmAfter = Optional.ofNullable(filmStorage.found(6));
 
-        if(filmBefore.isPresent() && filmAfter.isPresent()) {
-            assertEquals(filmBefore.get().getRate() + 1,filmAfter.get().getRate() ,
+        if (filmBefore.isPresent() && filmAfter.isPresent()) {
+            assertEquals(filmBefore.get().getRate() + 1, filmAfter.get().getRate(),
                     "Количество лайков не совпадает");
         }
     }
@@ -365,8 +365,8 @@ public void testFoundGenre() {
 
         Optional<Film> filmAfter = Optional.ofNullable(filmStorage.found(6));
 
-        if(filmBefore.isPresent() && filmAfter.isPresent()) {
-            assertEquals(filmBefore.get().getRate() - 1,filmAfter.get().getRate() ,
+        if (filmBefore.isPresent() && filmAfter.isPresent()) {
+            assertEquals(filmBefore.get().getRate() - 1, filmAfter.get().getRate(),
                     "Количество лайков не совпадает");
         }
     }
