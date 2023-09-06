@@ -16,6 +16,7 @@ target/
 !**/src/test/**/target/
 !**/src/mvnw
 !**/src/mvnw.cmd
+schem.png
 
 ### STS ###
 .apt_generated
