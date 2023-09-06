@@ -31,7 +31,7 @@ target/
 *.iws
 *.iml
 *.ipr
-
+HELP.md
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
