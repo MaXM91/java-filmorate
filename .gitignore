@@ -16,9 +16,7 @@ target/
 !**/src/test/**/target/
 !**/src/mvnw
 !**/src/mvnw.cmd
-schem.png
-!**/src/main/resouses/data.sql
-!**/src/main/resouses/schema.sql
+
 ### STS ###
 .apt_generated
 .classpath
