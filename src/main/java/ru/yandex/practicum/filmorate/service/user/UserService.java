@@ -1,26 +1,23 @@
 package ru.yandex.practicum.filmorate.service.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.validators.exceptions.ValidationException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
 public class UserService {
-//Work with users
+    //Work with users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     UserStorage userStorage;
 
-    @Autowired
-    UserService(InMemoryUserStorage userStorage) {
+    UserService(@Qualifier("UserDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -30,7 +27,9 @@ public class UserService {
             throw new ValidationException("UserService/create: user have id!");
         }
 
-        if (user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
+        if (user.getName() == null || user.getName()
+            .isEmpty() || user.getName()
+            .isBlank()) {
             user.setName(user.getLogin());
         }
 
@@ -48,7 +47,9 @@ public class UserService {
             throw new ObjectNotFoundException("UserService/update: user not found!");
         }
 
-        if (user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
+        if (user.getName() == null || user.getName()
+            .isEmpty() || user.getName()
+            .isBlank()) {
             user.setName(user.getLogin());
         }
 
@@ -66,15 +67,10 @@ public class UserService {
             throw new ObjectNotFoundException("UserService/update: user not found!");
         }
 
-        for (Integer idFriend : userStorage.found(id).getUserFriends()) {
-            userStorage.found(idFriend).deleteUserFriends(id);
-        }
-
         return userStorage.delete(id);
     }
 
-    public User found(Integer id) throws ObjectNotFoundException, ValidationException {
-
+    public User found(Integer id) throws ObjectNotFoundException {
         User user = userStorage.found(id);
         if (user == null) {
             log.info("Не найден при поиске юзер с ид {}", id);
@@ -100,7 +96,7 @@ public class UserService {
         return userStorage.get();
     }
 
-//Work with friend list of users
+    //Work with friend list of users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean addFriend(Integer id, Integer idFriend) throws ObjectNotFoundException {
 
@@ -128,8 +124,8 @@ public class UserService {
         return true;
     }
 
-    public List<User> getMutualFriends(Integer id, Integer otherId) throws ObjectNotFoundException, ValidationException {
-        List<User> mutualFriends = new ArrayList<>();
+    public List<User> getMutualFriends(Integer id, Integer otherId) throws ObjectNotFoundException,
+        ValidationException {
 
         if (id == null || id <= 0 || otherId == null || otherId <= 0) {
             log.info("Вывод общих друзей с неформатными ид {} {}", id, otherId);
@@ -141,11 +137,6 @@ public class UserService {
             throw new ObjectNotFoundException("UserService/getMutualFriends: user not found!");
         }
 
-        for (Integer friendsId : userStorage.found(id).getUserFriends()) {
-            if (userStorage.found(otherId).getUserFriends().contains(friendsId)) {
-                mutualFriends.add(userStorage.found(friendsId));
-            }
-        }
-        return mutualFriends;
+        return userStorage.getMutualFriends(id, otherId);
     }
 }

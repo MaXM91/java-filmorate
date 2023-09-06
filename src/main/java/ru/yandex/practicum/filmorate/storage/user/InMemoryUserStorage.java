@@ -9,10 +9,10 @@ import java.util.List;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-//Work with users
+    private static final HashMap<Integer, User> users = new HashMap<>();
+    //Work with users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     private int userId = 1;
-    private static final HashMap<Integer, User> users = new HashMap<>();
 
     @Override
     public User create(User user) {
@@ -47,10 +47,13 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getFriends(Integer id) {
         List<User> friends = new ArrayList<>();
 
-        if (users.get(id).getUserFriends().isEmpty()) {
+        if (users.get(id)
+            .getUserFriends()
+            .isEmpty()) {
             return null;
         }
-        for (Integer friendId : users.get(id).getUserFriends()) {
+        for (Integer friendId : users.get(id)
+            .getUserFriends()) {
             friends.add(users.get(friendId));
         }
         return friends;
@@ -61,17 +64,36 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
-// Work with friends list
+    // Work with friends list
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void addFriend(Integer id, Integer idFriend) {
-        users.get(id).setUserFriends(idFriend);
-        users.get(idFriend).setUserFriends(id);
+        users.get(id)
+            .setUserFriends(idFriend);
+        users.get(idFriend)
+            .setUserFriends(id);
     }
 
     @Override
     public void deleteFriend(Integer id, Integer idFriend) {
-        users.get(id).deleteUserFriends(idFriend);
-        users.get(idFriend).deleteUserFriends(id);
+        users.get(id)
+            .deleteUserFriends(idFriend);
+        users.get(idFriend)
+            .deleteUserFriends(id);
     }
+
+    public List<User> getMutualFriends(Integer id, Integer otherId) {
+        List<User> mutualFriends = new ArrayList<>();
+
+        for (Integer friendsId : users.get(id)
+            .getUserFriends()) {
+            if (users.get(otherId)
+                .getUserFriends()
+                .contains(friendsId)) {
+                mutualFriends.add(users.get(friendsId));
+            }
+        }
+        return mutualFriends;
+    }
+
 }
