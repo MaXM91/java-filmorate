@@ -33,8 +33,8 @@ public class FilmDbStorage implements FilmStorage {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement
-                    ("INSERT INTO films (name, description, releaseDate, duration)values (?, ?, ?, ?)", new String[]{"id"});
+            PreparedStatement preparedStatement = connection.prepareStatement(
+            "INSERT INTO films (name, description, releaseDate, duration)values (?, ?, ?, ?)", new String[]{"id"});
             preparedStatement.setString(1, film.getName());
             preparedStatement.setString(2, film.getDescription());
             preparedStatement.setDate(3, Date.valueOf(film.getReleaseDate()));
@@ -68,21 +68,18 @@ public class FilmDbStorage implements FilmStorage {
 
         //   try {
         if (film.getGenres() != null) {
-            jdbcTemplate.update("DELETE film_genre WHERE film_id = ?", film.getId());
+            jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
             film.setGenres(changeFilmGenre("INSERT INTO film_genre (film_id, genre_id) VALUES(?,?)", film));
         } else {
-            jdbcTemplate.update("DELETE film_genre WHERE film_id = ?", film.getId());
+            jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
         }
 
         if (film.getMpa() != null) {
-            jdbcTemplate.update("DELETE film_mpa WHERE film_id = ?", film.getId());
+            jdbcTemplate.update("DELETE FROM film_mpa WHERE film_id = ?", film.getId());
             film.setMpa(changeFilmMpa("INSERT INTO film_mpa (film_id, mpa_id) VALUES(?, ?)", film));
         } else {
-            jdbcTemplate.update("DELETE film_mpa WHERE film_id = ?", film.getId());
+            jdbcTemplate.update("DELETE FROM film_mpa WHERE film_id = ?", film.getId());
         }
-
-        //   } catch (EmptyResultDataAccessException exc) {
-        //   }
 
         return film;
     }
