@@ -8,7 +8,10 @@ import ru.yandex.practicum.filmorate.service.user.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController @RequestMapping("/users") @RequiredArgsConstructor public class UserController {
+@RestController
+@RequestMapping("/users")
+@RequiredArgsConstructor
+public class UserController {
     private final UserService userService;
 
     @PostMapping

@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j @Component public class InMemoryFilmStorage implements FilmStorage {
+@Slf4j
+@Component
+public class InMemoryFilmStorage implements FilmStorage {
     private static final HashMap<Integer, Film> films = new HashMap<>();
     // Work with films
 ///////////////////////////////////////////////////////////////////////////////////////////////////

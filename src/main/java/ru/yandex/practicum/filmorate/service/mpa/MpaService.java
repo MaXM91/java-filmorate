@@ -7,7 +7,9 @@ import ru.yandex.practicum.filmorate.storage.mpa.MpaDbStorage;
 
 import java.util.List;
 
-@Service @RequiredArgsConstructor public class MpaService {
+@Service
+@RequiredArgsConstructor
+public class MpaService {
     private final MpaDbStorage mpaDbStorage;
 
     public Mpa getMpaById(Integer id) {

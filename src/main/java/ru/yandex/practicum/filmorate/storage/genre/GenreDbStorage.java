@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundExcepti
 
 import java.util.List;
 
-@Component @RequiredArgsConstructor public class GenreDbStorage {
+@Component
+@RequiredArgsConstructor
+public class GenreDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public Genre found(Integer id) {

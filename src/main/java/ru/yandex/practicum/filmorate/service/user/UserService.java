@@ -10,7 +10,9 @@ import ru.yandex.practicum.filmorate.validators.exceptions.ValidationException;
 
 import java.util.List;
 
-@Slf4j @Service public class UserService {
+@Slf4j
+@Service
+public class UserService {
     //Work with users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     UserStorage userStorage;

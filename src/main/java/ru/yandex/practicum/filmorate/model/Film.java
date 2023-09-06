@@ -10,7 +10,8 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data public class Film {
+@Data
+public class Film {
     private static final LocalDate DATE_BIRTH_CINEMA = LocalDate.of(1895, 12, 25);
     private int id;
 

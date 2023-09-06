@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Component @Qualifier("FilmDbStorage") public class FilmDbStorage implements FilmStorage {
+@Component
+@Qualifier("FilmDbStorage")
+public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {

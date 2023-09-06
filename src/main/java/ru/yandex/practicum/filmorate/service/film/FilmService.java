@@ -13,7 +13,9 @@ import ru.yandex.practicum.filmorate.validators.exceptions.ValidationException;
 
 import java.util.List;
 
-@Slf4j @Service public class FilmService {
+@Slf4j
+@Service
+public class FilmService {
 // Work with films
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundExcepti
 
 import java.util.List;
 
-@Component @RequiredArgsConstructor public class MpaDbStorage {
+@Component
+@RequiredArgsConstructor
+public class MpaDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public Mpa found(Integer id) {

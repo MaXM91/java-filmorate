@@ -10,7 +10,10 @@ import ru.yandex.practicum.filmorate.service.mpa.MpaService;
 
 import java.util.List;
 
-@RestController @RequestMapping("/mpa") @RequiredArgsConstructor public class MpaController {
+@RestController
+@RequestMapping("/mpa")
+@RequiredArgsConstructor
+public class MpaController {
     private final MpaService mpaService;
 
     @GetMapping("/{id}")

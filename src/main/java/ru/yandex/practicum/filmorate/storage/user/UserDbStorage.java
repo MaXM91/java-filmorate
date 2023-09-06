@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Component @Qualifier("UserDbStorage") public class UserDbStorage implements UserStorage {
+@Component
+@Qualifier("UserDbStorage")
+public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {

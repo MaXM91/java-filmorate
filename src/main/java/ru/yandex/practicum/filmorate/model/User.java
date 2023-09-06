@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Data public class User {
+@Data
+public class User {
 
     private int id;
 

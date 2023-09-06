@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Component public class InMemoryUserStorage implements UserStorage {
+@Component
+public class InMemoryUserStorage implements UserStorage {
     private static final HashMap<Integer, User> users = new HashMap<>();
     //Work with users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
