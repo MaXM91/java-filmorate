@@ -7,16 +7,14 @@ import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class GenreService {
-	private final GenreDbStorage genreDbStorage;
+@Service @RequiredArgsConstructor public class GenreService {
+    private final GenreDbStorage genreDbStorage;
 
-	public Genre getGenreById(Integer id) {
-		return genreDbStorage.found(id);
-	}
+    public Genre getGenreById(Integer id) {
+        return genreDbStorage.found(id);
+    }
 
-	public List<Genre> get() {
-		return genreDbStorage.get();
-	}
+    public List<Genre> get() {
+        return genreDbStorage.get();
+    }
 }

@@ -10,20 +10,17 @@ import ru.yandex.practicum.filmorate.service.mpa.MpaService;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/mpa")
-@RequiredArgsConstructor
-public class MpaController {
-	private final MpaService mpaService;
+@RestController @RequestMapping("/mpa") @RequiredArgsConstructor public class MpaController {
+    private final MpaService mpaService;
 
-	@GetMapping("/{id}")
-	public Mpa getMpaById(@PathVariable Integer id) {
-		return mpaService.getMpaById(id);
-	}
+    @GetMapping("/{id}")
+    public Mpa getMpaById(@PathVariable Integer id) {
+        return mpaService.getMpaById(id);
+    }
 
-	@GetMapping
-	public List<Mpa> getAllMpa() {
-		return mpaService.getAllMpa();
-	}
+    @GetMapping
+    public List<Mpa> getAllMpa() {
+        return mpaService.getAllMpa();
+    }
 
 }

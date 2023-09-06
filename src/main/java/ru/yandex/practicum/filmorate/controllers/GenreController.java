@@ -10,20 +10,17 @@ import ru.yandex.practicum.filmorate.service.genre.GenreService;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/genres")
-@RequiredArgsConstructor
-public class GenreController {
-	private final GenreService genreService;
+@RestController @RequestMapping("/genres") @RequiredArgsConstructor public class GenreController {
+    private final GenreService genreService;
 
-	@GetMapping("/{id}")
-	public Genre getGenreById(@PathVariable Integer id) {
-		return genreService.getGenreById(id);
-	}
+    @GetMapping("/{id}")
+    public Genre getGenreById(@PathVariable Integer id) {
+        return genreService.getGenreById(id);
+    }
 
-	@GetMapping
-	public List<Genre> get() {
-		return genreService.get();
-	}
+    @GetMapping
+    public List<Genre> get() {
+        return genreService.get();
+    }
 
 }
