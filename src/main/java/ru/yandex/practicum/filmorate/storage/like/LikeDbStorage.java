@@ -12,10 +12,10 @@ public class LikeDbStorage {
     }
 
     public void add(Integer filmId, Integer userId) {
-        jdbcTemplate.update("INSERT INTO likes(film_id, user_id) VALUES(?, ?)",filmId, userId);
+        jdbcTemplate.update("INSERT INTO likes(film_id, user_id) VALUES(?, ?)", filmId, userId);
     }
 
     public void remove(Integer filmId, Integer userId) {
-        jdbcTemplate.update("DELETE likes WHERE film_id = ? AND user_id = ?",filmId, userId);
+        jdbcTemplate.update("DELETE FROM likes WHERE film_id = ? AND user_id = ?", filmId, userId);
     }
 }

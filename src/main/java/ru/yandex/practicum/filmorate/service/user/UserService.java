@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserService {
-//Work with users
+    //Work with users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     UserStorage userStorage;
 
@@ -69,9 +69,9 @@ public class UserService {
     public User found(Integer id) throws ObjectNotFoundException {
         User user = userStorage.found(id);
         if (user == null) {
-                log.info("Не найден при поиске юзер с ид {}", id);
-                throw new ObjectNotFoundException("UserService/found: user not found!");
-            }
+            log.info("Не найден при поиске юзер с ид {}", id);
+            throw new ObjectNotFoundException("UserService/found: user not found!");
+        }
         return user;
     }
 
@@ -92,7 +92,7 @@ public class UserService {
         return userStorage.get();
     }
 
-//Work with friend list of users
+    //Work with friend list of users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean addFriend(Integer id, Integer idFriend) throws ObjectNotFoundException {
 
@@ -132,6 +132,6 @@ public class UserService {
             throw new ObjectNotFoundException("UserService/getMutualFriends: user not found!");
         }
 
-       return userStorage.getMutualFriends(id, otherId);
+        return userStorage.getMutualFriends(id, otherId);
     }
 }

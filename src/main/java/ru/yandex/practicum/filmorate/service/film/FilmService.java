@@ -70,7 +70,7 @@ public class FilmService {
         return filmStorage.get();
     }
 
-// Work with likes
+    // Work with likes
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean addLike(Integer filmId, Integer userId) throws ObjectNotFoundException {
         if (filmStorage.found(filmId) == null) {

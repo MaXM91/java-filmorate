@@ -12,7 +12,6 @@ public class Film {
     private static final LocalDate DATE_BIRTH_CINEMA = LocalDate.of(1895, 12, 25);
     private int id;
 
-
     @NotBlank(message = "film: name is blank!")
     @NotEmpty(message = "film: name is empty!")
     private String name;

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-// Work with films
+    // Work with films
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     private int filmId = 1;
     private static final HashMap<Integer, Film> films = new HashMap<>();

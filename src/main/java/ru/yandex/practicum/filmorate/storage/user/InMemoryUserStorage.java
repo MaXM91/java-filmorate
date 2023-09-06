@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-//Work with users
+    //Work with users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     private int userId = 1;
     private static final HashMap<Integer, User> users = new HashMap<>();
@@ -61,7 +61,7 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
-// Work with friends list
+    // Work with friends list
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void addFriend(Integer id, Integer idFriend) {

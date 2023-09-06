@@ -1,23 +1,18 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Qualifier("UserDbStorage")
@@ -41,7 +36,7 @@ public class UserDbStorage implements UserStorage {
             return preparedStatement;
         }, keyHolder);
 
-        user.setId(keyHolder.getKey().intValue());
+        user.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         return user;
     }
 
@@ -71,17 +66,13 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User found(Integer id) {
         try {
-            User user = jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new RowMapper<User>() {
-                @Override
-                public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new User(rs.getInt("id"), rs.getString("email"), rs.getString("login"),
-                            rs.getString("name"), rs.getDate("birthday").toLocalDate());
-                }
-            }, id);
+            User user = jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", (rs, rowNum) -> new User(rs.getInt("id"), rs.getString("email"), rs.getString("login"),
+                    rs.getString("name"), rs.getDate("birthday").toLocalDate()), id);
 
             List<Integer> friends = foundFriendsIds(id);
 
-            for(Integer friendId : friends) {
+            for (Integer friendId : friends) {
+                assert user != null;
                 user.setUserFriends(friendId);
             }
 
@@ -93,25 +84,21 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> get() {
-        List<User> users = jdbcTemplate.query("SELECT * FROM users", new RowMapper<User>() {
-            @Override
-            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                User user = new User(rs.getInt("id"),
-                        rs.getString("email"),
-                        rs.getString("login"), rs.getString("name"),
-                        rs.getDate("birthday").toLocalDate());
 
-                List<Integer> friends = foundFriendsIds(rs.getInt("id"));
+        return jdbcTemplate.query("SELECT * FROM users", (rs, rowNum) -> {
+            User user = new User(rs.getInt("id"),
+                    rs.getString("email"),
+                    rs.getString("login"), rs.getString("name"),
+                    rs.getDate("birthday").toLocalDate());
 
-                for(Integer friendId : friends) {
-                    user.setUserFriends(friendId);
-                }
+            List<Integer> friends = foundFriendsIds(rs.getInt("id"));
 
-                return user;
+            for (Integer friendId : friends) {
+                user.setUserFriends(friendId);
             }
-        });
 
-        return users;
+            return user;
+        });
     }
 
     @Override
@@ -132,7 +119,7 @@ public class UserDbStorage implements UserStorage {
                 idFriend
         );
 
-        if(checkFriends(id, idFriend)) {
+        if (checkFriends(id, idFriend)) {
             jdbcTemplate.update("UPDATE friends SET approved_by_to = 1 WHERE user_id_from = ? AND user_id_to = ?", id, idFriend);
             jdbcTemplate.update("UPDATE friends SET approved_by_to = 1 WHERE user_id_from = ? AND user_id_to = ?", idFriend, id);
         }
@@ -142,7 +129,7 @@ public class UserDbStorage implements UserStorage {
     public void deleteFriend(Integer id, Integer idFriend) {
         jdbcTemplate.update("DELETE FROM friends WHERE user_id_from = ? AND user_id_to = ?", id, idFriend);
 
-        if(checkFriends(id, idFriend)) {
+        if (checkFriends(id, idFriend)) {
             jdbcTemplate.update("UPDATE friends SET approved_by_to = 0 WHERE user_id_from = ? AND user_id_to = ?", id, idFriend);
             jdbcTemplate.update("UPDATE friends SET approved_by_to = 0 WHERE user_id_from = ? AND user_id_to = ?", idFriend, id);
         }
@@ -154,33 +141,28 @@ public class UserDbStorage implements UserStorage {
         List<User> friendsOtherId = getFriends(otherId);
         List<User> mutualFriends = new ArrayList<>();
 
-        for(User user : friendsId) {
+        for (User user : friendsId) {
             if (friendsOtherId.contains(user)) {
                 mutualFriends.add(user);
             }
         }
-        
+
         return mutualFriends;
     }
 
     private List<Integer> foundFriendsIds(Integer id) {
-        return jdbcTemplate.query("SELECT user_id_to FROM friends WHERE user_id_from = ?", new RowMapper<Integer>() {
-            @Override
-            public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getInt("user_id_to");
-            }
-        }, id);
+        return jdbcTemplate.query("SELECT user_id_to FROM friends WHERE user_id_from = ?", (rs, rowNum) -> rs.getInt("user_id_to"), id);
     }
 
     private boolean checkFriends(Integer id, Integer idFriend) {
-            List<User> checkFriend = getFriends(idFriend);
+        List<User> checkFriend = getFriends(idFriend);
 
-            for(User user : checkFriend) {
-                if (user.getId() == id) {
-                    return true;
-                }
+        for (User user : checkFriend) {
+            if (user.getId() == id) {
+                return true;
             }
-            return false;
+        }
+        return false;
     }
 
 }
