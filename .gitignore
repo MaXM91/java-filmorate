@@ -5,7 +5,7 @@ HELP.md
 !**/src/test/**/target/
 !**/src/mvnw
 !**/src/mvnw.cmd
-!.idea/
+!db/
 ### STS ###
 .apt_generated
 .classpath
