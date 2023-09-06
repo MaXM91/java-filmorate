@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -14,10 +13,9 @@ import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundExcepti
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Qualifier("FilmDbStorage")
@@ -41,14 +39,14 @@ public class FilmDbStorage implements FilmStorage {
             return preparedStatement;
         }, keyHolder);
 
-        film.setId(keyHolder.getKey().intValue());
+        film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
 
         if (film.getGenres() != null) {
-            film.setGenres(changeFilmGenre("INSERT INTO film_genre (film_id, genre_id) VALUES(?,?)", film));
+            film.setGenres(changeFilmGenre(film));
         }
 
         if (film.getMpa() != null) {
-            film.setMpa(changeFilmMpa("INSERT INTO film_mpa (film_id, mpa_id) VALUES(?, ?)", film));
+            film.setMpa(changeFilmMpa(film));
         }
 
         return film;
@@ -68,14 +66,14 @@ public class FilmDbStorage implements FilmStorage {
         //   try {
         if (film.getGenres() != null) {
             jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
-            film.setGenres(changeFilmGenre("INSERT INTO film_genre (film_id, genre_id) VALUES(?,?)", film));
+            film.setGenres(changeFilmGenre(film));
         } else {
             jdbcTemplate.update("DELETE FROM film_genre WHERE film_id = ?", film.getId());
         }
 
         if (film.getMpa() != null) {
             jdbcTemplate.update("DELETE FROM film_mpa WHERE film_id = ?", film.getId());
-            film.setMpa(changeFilmMpa("INSERT INTO film_mpa (film_id, mpa_id) VALUES(?, ?)", film));
+            film.setMpa(changeFilmMpa(film));
         } else {
             jdbcTemplate.update("DELETE FROM film_mpa WHERE film_id = ?", film.getId());
         }
@@ -95,19 +93,14 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film found(Integer id) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM films WHERE id = ?", new RowMapper<Film>() {
-                @Override
-                public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new Film(rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getString("description"),
-                            readFilmGenre(rs.getInt("id")),
-                            readFilmMpa(rs.getInt("id")),
-                            readUsersLike(id),
-                            rs.getDate("releaseDate").toLocalDate(),
-                            rs.getInt("duration"));
-                }
-            }, id);
+            return jdbcTemplate.queryForObject("SELECT * FROM films WHERE id = ?", (rs, rowNum) -> new Film(rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    readFilmGenre(rs.getInt("id")),
+                    readFilmMpa(rs.getInt("id")),
+                    readUsersLike(id),
+                    rs.getDate("releaseDate").toLocalDate(),
+                    rs.getInt("duration")), id);
         } catch (RuntimeException exc) {
             throw new ObjectNotFoundException("FilmDbStorage/found: film not found!");
         }
@@ -115,55 +108,43 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> get() {
-        List<Film> films = jdbcTemplate.query("SELECT * FROM films", new RowMapper<Film>() {
-            @Override
-            public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new Film(rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("description"),
-                        readFilmGenre(rs.getInt("id")),
-                        readFilmMpa(rs.getInt("id")),
-                        readUsersLike(rs.getInt("id")),
-                        rs.getDate("releaseDate").toLocalDate(),
-                        rs.getInt("duration")
-                );
-            }
-        });
 
-        return films;
+        return jdbcTemplate.query("SELECT * FROM films", (rs, rowNum) -> new Film(rs.getInt("id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                readFilmGenre(rs.getInt("id")),
+                readFilmMpa(rs.getInt("id")),
+                readUsersLike(rs.getInt("id")),
+                rs.getDate("releaseDate").toLocalDate(),
+                rs.getInt("duration")
+        ));
     }
 
     @Override
     public List<Film> popularFilms(long count) {
         try {
-            List<Film> descFilms = jdbcTemplate.query(
+
+            return jdbcTemplate.query(
                     "SELECT f.id, f.name, f.description, f.releasedate, f.duration, COUNT(l.user_id) AS rate\n" +
                             "FROM films AS f\n" +
                             "LEFT JOIN likes AS l ON f.ID = l.film_id\n" +
                             "GROUP BY f.id\n" +
                             "ORDER BY rate DESC\n" +
-                            "LIMIT ? ", new RowMapper<Film>() {
-                        @Override
-                        public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
-                            return new Film(rs.getInt("id"),
+                            "LIMIT ? ", (rs, rowNum) -> new Film(rs.getInt("id"),
                                     rs.getString("name"),
                                     rs.getString("description"),
                                     readFilmGenre(rs.getInt("id")),
                                     readFilmMpa(rs.getInt("id")),
                                     rs.getInt("rate"),
                                     rs.getDate("releaseDate").toLocalDate(),
-                                    rs.getInt("duration"));
-                        }
-                    }, (int) count);
-
-            return descFilms;
+                                    rs.getInt("duration")), (int) count);
 
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
 
-    private List<Genre> changeFilmGenre(String query, Film film) {
+    private List<Genre> changeFilmGenre(Film film) {
         List<Genre> newList = new ArrayList<>();
         List<Integer> changeRepeat = new ArrayList<>();
 
@@ -173,15 +154,10 @@ public class FilmDbStorage implements FilmStorage {
             } else {                                       //
                 changeRepeat.add(genre.getId());           //
             }                                              //
-            jdbcTemplate.update(query, film.getId(), genre.getId()); // Ввести пару
+            jdbcTemplate.update("INSERT INTO film_genre (film_id, genre_id) VALUES(?,?)", film.getId(), genre.getId()); // Ввести пару
 
-            Genre fullGenre = jdbcTemplate.queryForObject("SELECT * FROM genre WHERE genre_id = ?", new RowMapper<Genre>() {
-                @Override
-                public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new Genre(rs.getInt("genre_id"),
-                            rs.getString("name"));
-                }
-            }, genre.getId());
+            Genre fullGenre = jdbcTemplate.queryForObject("SELECT * FROM genre WHERE genre_id = ?", (rs, rowNum) -> new Genre(rs.getInt("genre_id"),
+                    rs.getString("name")), genre.getId());
 
             newList.add(fullGenre);
         }
@@ -196,17 +172,14 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN film_genre AS fg ON f.id=fg.film_id \n" +
                     "LEFT JOIN genre AS g ON fg.genre_id=g.genre_id\n" +
                     "WHERE f.id = ?\n" +
-                    "GROUP BY g.genre_id", new RowMapper<Genre>() {
-                @Override
-                public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    if (rs.getInt("genre_id") == 0) {
-                        return null;
-                    } else {
-                        return new Genre(rs.getInt("genre_id"),
-                                rs.getString("name"));
-                    }
-                }
-            }, id);
+                    "GROUP BY g.genre_id", (rs, rowNum) -> {
+                        if (rs.getInt("genre_id") == 0) {
+                            return null;
+                        } else {
+                            return new Genre(rs.getInt("genre_id"),
+                                    rs.getString("name"));
+                        }
+                    }, id);
 
             if (genres.contains(null)) {
                 genres.clear();
@@ -218,16 +191,10 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private Mpa changeFilmMpa(String query, Film film) {
-        jdbcTemplate.update(query, film.getId(), film.getMpa().getId());
+    private Mpa changeFilmMpa(Film film) {
+        jdbcTemplate.update("INSERT INTO film_mpa (film_id, mpa_id) VALUES(?, ?)", film.getId(), film.getMpa().getId());
 
-        Mpa fullMpa = jdbcTemplate.queryForObject("SELECT * FROM mpa WHERE mpa_id = ?", new RowMapper<Mpa>() {
-            @Override
-            public Mpa mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new Mpa(rs.getInt("Mpa_id"), rs.getString("name"));
-            }
-        }, film.getMpa().getId());
-        return fullMpa;
+        return jdbcTemplate.queryForObject("SELECT * FROM mpa WHERE mpa_id = ?", (rs, rowNum) -> new Mpa(rs.getInt("Mpa_id"), rs.getString("name")), film.getMpa().getId());
     }
 
     private Mpa readFilmMpa(Integer id) {
@@ -237,13 +204,8 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN film_mpa AS fm ON f.id=fm.film_id \n" +
                     "LEFT JOIN mpa AS m ON fm.mpa_id=m.mpa_id\n" +
                     "WHERE f.id = ?\n" +
-                    "GROUP BY fm.mpa_id, m.name", new RowMapper<Mpa>() {
-                @Override
-                public Mpa mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new Mpa(rs.getInt("mpa_id"),
-                            rs.getString("name"));
-                }
-            }, id);
+                    "GROUP BY fm.mpa_id, m.name", (rs, rowNum) -> new Mpa(rs.getInt("mpa_id"),
+                            rs.getString("name")), id);
 
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -252,13 +214,7 @@ public class FilmDbStorage implements FilmStorage {
 
     private Integer readUsersLike(Integer filmId) {
         try {
-            Integer rate = jdbcTemplate.queryForObject("SELECT COUNT(user_id) AS c FROM likes WHERE film_id = ?", new RowMapper<Integer>() {
-                @Override
-                public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return (rs.getInt("c"));
-                }
-            }, filmId);
-            return rate;
+            return jdbcTemplate.queryForObject("SELECT COUNT(user_id) AS c FROM likes WHERE film_id = ?", (rs, rowNum) -> (rs.getInt("c")), filmId);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
