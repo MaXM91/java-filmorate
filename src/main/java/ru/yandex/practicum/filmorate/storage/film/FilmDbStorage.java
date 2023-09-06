@@ -237,7 +237,7 @@ public class FilmDbStorage implements FilmStorage {
                     "LEFT JOIN film_mpa AS fm ON f.id=fm.film_id \n" +
                     "LEFT JOIN mpa AS m ON fm.mpa_id=m.mpa_id\n" +
                     "WHERE f.id = ?\n" +
-                    "GROUP BY fm.mpa_id", new RowMapper<Mpa>() {
+                    "GROUP BY fm.mpa_id, m.name", new RowMapper<Mpa>() {
                 @Override
                 public Mpa mapRow(ResultSet rs, int rowNum) throws SQLException {
                     return new Mpa(rs.getInt("mpa_id"),
