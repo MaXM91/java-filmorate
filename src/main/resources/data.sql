@@ -1,4 +1,3 @@
-/*
 INSERT INTO users (email, login, name, birthday)
     VALUES ('email1', 'login1', 'name1', '1990-01-01'),
            ('email2', 'login2', 'name2', '1990-01-02'),
@@ -99,4 +98,3 @@ INSERT INTO likes
            (12, 8),
            (12, 3),
            (6, 7);
-*/
