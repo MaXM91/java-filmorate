@@ -118,9 +118,9 @@ public class FilmDbStorage implements FilmStorage {
 
             return jdbcTemplate.query(
                 "SELECT f.id, f.name, f.description, f.releasedate, f.duration, COUNT(l.user_id) " +
-                    "AS rate\n" +
-                    "FROM films AS f\n" + "LEFT JOIN likes AS l ON f.ID = l.film_id\n" +
-                    "GROUP BY f.id\n" + "ORDER BY rate DESC\n" + "LIMIT ? ",
+                    "AS rate\n" + "FROM films AS f\n" +
+                    "LEFT JOIN likes AS l ON f.ID = l.film_id\n" + "GROUP BY f.id\n" +
+                    "ORDER BY rate DESC\n" + "LIMIT ? ",
                 (rs, rowNum) -> new Film(rs.getInt("id"), rs.getString("name"),
                     rs.getString("description"), readFilmGenre(rs.getInt("id")),
                     readFilmMpa(rs.getInt("id")), rs.getInt("rate"), rs.getDate("releaseDate")
