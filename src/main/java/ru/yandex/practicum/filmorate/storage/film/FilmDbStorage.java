@@ -41,8 +41,7 @@ public class FilmDbStorage implements FilmStorage {
             return preparedStatement;
         }, keyHolder);
 
-        film.setId(Objects.requireNonNull(keyHolder.getKey())
-            .intValue());
+        film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
 
         if (film.getGenres() != null) {
             film.setGenres(changeFilmGenre(film));
@@ -94,8 +93,8 @@ public class FilmDbStorage implements FilmStorage {
             return jdbcTemplate.queryForObject("SELECT * FROM films WHERE id = ?",
                 (rs, rowNum) -> new Film(rs.getInt("id"), rs.getString("name"),
                     rs.getString("description"), readFilmGenre(rs.getInt("id")),
-                    readFilmMpa(rs.getInt("id")), readUsersLike(id), rs.getDate("releaseDate")
-                    .toLocalDate(), rs.getInt("duration")), id);
+                    readFilmMpa(rs.getInt("id")), readUsersLike(id),
+                    rs.getDate("releaseDate").toLocalDate(), rs.getInt("duration")), id);
         } catch (RuntimeException exc) {
             throw new ObjectNotFoundException("FilmDbStorage/found: film not found!");
         }
@@ -108,8 +107,7 @@ public class FilmDbStorage implements FilmStorage {
             (rs, rowNum) -> new Film(rs.getInt("id"), rs.getString("name"),
                 rs.getString("description"), readFilmGenre(rs.getInt("id")),
                 readFilmMpa(rs.getInt("id")), readUsersLike(rs.getInt("id")),
-                rs.getDate("releaseDate")
-                    .toLocalDate(), rs.getInt("duration")));
+                rs.getDate("releaseDate").toLocalDate(), rs.getInt("duration")));
     }
 
     @Override
@@ -123,8 +121,8 @@ public class FilmDbStorage implements FilmStorage {
                     "ORDER BY rate DESC\n" + "LIMIT ? ",
                 (rs, rowNum) -> new Film(rs.getInt("id"), rs.getString("name"),
                     rs.getString("description"), readFilmGenre(rs.getInt("id")),
-                    readFilmMpa(rs.getInt("id")), rs.getInt("rate"), rs.getDate("releaseDate")
-                    .toLocalDate(), rs.getInt("duration")), (int) count);
+                    readFilmMpa(rs.getInt("id")), rs.getInt("rate"),
+                    rs.getDate("releaseDate").toLocalDate(), rs.getInt("duration")), (int) count);
 
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -180,12 +178,11 @@ public class FilmDbStorage implements FilmStorage {
 
     private Mpa changeFilmMpa(Film film) {
         jdbcTemplate.update("INSERT INTO film_mpa (film_id, mpa_id) VALUES(?, ?)", film.getId(),
-            film.getMpa()
-                .getId());
+            film.getMpa().getId());
 
         return jdbcTemplate.queryForObject("SELECT * FROM mpa WHERE mpa_id = ?",
-            (rs, rowNum) -> new Mpa(rs.getInt("Mpa_id"), rs.getString("name")), film.getMpa()
-                .getId());
+            (rs, rowNum) -> new Mpa(rs.getInt("Mpa_id"), rs.getString("name")),
+            film.getMpa().getId());
     }
 
     private Mpa readFilmMpa(Integer id) {
