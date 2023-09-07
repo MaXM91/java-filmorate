@@ -1,3 +1,4 @@
+/*
 INSERT INTO users (email, login, name, birthday)
     VALUES ('email1', 'login1', 'name1', '1990-01-01'),
            ('email2', 'login2', 'name2', '1990-01-02'),
@@ -22,7 +23,7 @@ INSERT INTO films (name, description, releasedate, duration)
            ('name10', 'description10', '1990-02-10', 110),
            ('name11', 'description11', '1990-02-11', 111),
            ('name12', 'description12', '1990-02-12', 112);
-
+*/
 INSERT INTO public.genre (name)
     VALUES ('Комедия'),
            ('Драма'),
@@ -37,7 +38,7 @@ INSERT INTO public.mpa (name)
            ('PG-13'),
            ('R'),
            ('NC-17');
-
+/*
 INSERT INTO film_genre
     VALUES (1, 1),
            (2, 2),
@@ -97,4 +98,4 @@ INSERT INTO likes
            (1, 7),
            (12, 8),
            (12, 3),
-           (6, 7);
+           (6, 7);   */
