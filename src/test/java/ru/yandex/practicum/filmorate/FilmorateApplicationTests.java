@@ -47,89 +47,89 @@ class FilmorateApplicationTests {
     @BeforeEach
     public void startDataBase() {
         jdbcTemplate.update("INSERT INTO users (email, login, name, birthday)\n"+
-            "VALUES ('email1', 'login1', 'name1', '1990-01-01'),\n" +
-            "('email2', 'login2', 'name2', '1990-01-02'),\n" +
-            "('email3', 'login3', 'name3', '1990-01-03'),\n" +
-            "('email4', 'login4', 'name4', '1990-01-04'),\n" +
-            "('email5', 'login5', 'name5', '1990-01-05'),\n" +
-            "('email6', 'login6', 'name6', '1990-01-06'),\n" +
-            "('email7', 'login7', 'name7', '1990-01-07'),\n" +
-            "('email8', 'login8', 'name8', '1990-01-08'),\n" +
+            "VALUES ('email1', 'login1', 'name1', '1990-01-01'),\n"+
+            "('email2', 'login2', 'name2', '1990-01-02'),\n"+
+            "('email3', 'login3', 'name3', '1990-01-03'),\n"+
+            "('email4', 'login4', 'name4', '1990-01-04'),\n"+
+            "('email5', 'login5', 'name5', '1990-01-05'),\n"+
+            "('email6', 'login6', 'name6', '1990-01-06'),\n"+
+            "('email7', 'login7', 'name7', '1990-01-07'),\n"+
+            "('email8', 'login8', 'name8', '1990-01-08'),\n"+
             "('email9', 'login9', 'name9', '1990-01-09');");
 
-        jdbcTemplate.update("INSERT INTO films (name, description, releasedate, duration)\n" +
-            "VALUES ('name1', 'description1', '1990-02-01', 101),\n" +
-            "('name2', 'description2', '1990-02-02', 102),\n" +
-            "('name3', 'description3', '1990-02-03', 103),\n" +
-            "('name4', 'description4', '1990-02-04', 104),\n" +
-            "('name5', 'description5', '1990-02-05', 105),\n" +
-            "('name6', 'description6', '1990-02-06', 106),\n" +
-            "('name7', 'description7', '1990-02-07', 107),\n" +
-            "('name8', 'description8', '1990-02-08', 108),\n" +
-            "('name9', 'description9', '1990-02-09', 109),\n" +
-            "('name10', 'description10', '1990-02-10', 110),\n" +
-            "('name11', 'description11', '1990-02-11', 111),\n" +
+        jdbcTemplate.update("INSERT INTO films (name, description, releasedate, duration)\n"+
+            "VALUES ('name1', 'description1', '1990-02-01', 101),\n"+
+            "('name2', 'description2', '1990-02-02', 102),\n"+
+            "('name3', 'description3', '1990-02-03', 103),\n"+
+            "('name4', 'description4', '1990-02-04', 104),\n"+
+            "('name5', 'description5', '1990-02-05', 105),\n"+
+            "('name6', 'description6', '1990-02-06', 106),\n"+
+            "('name7', 'description7', '1990-02-07', 107),\n"+
+            "('name8', 'description8', '1990-02-08', 108),\n"+
+            "('name9', 'description9', '1990-02-09', 109),\n"+
+            "('name10', 'description10', '1990-02-10', 110),\n"+
+            "('name11', 'description11', '1990-02-11', 111),\n"+
             "('name12', 'description12', '1990-02-12', 112);");
 
         jdbcTemplate.update("INSERT INTO film_genre\n"+
-            "VALUES (1, 1),\n" +
-            "(2, 2),\n" +
-            "(1, 3),\n" +
-            "(3, 3),\n" +
-            "(4, 4),\n" +
-            "(6, 3),\n" +
-            "(5, 5),\n" +
-            "(6, 6),\n" +
-            "(7, 6),\n" +
-            "(8, 5),\n" +
-            "(9, 4),\n" +
-            "(10, 3),\n" +
-            "(11, 2),\n" +
+            "VALUES (1, 1),\n"+
+            "(2, 2),\n"+
+            "(1, 3),\n"+
+            "(3, 3),\n"+
+            "(4, 4),\n"+
+            "(6, 3),\n"+
+            "(5, 5),\n"+
+            "(6, 6),\n"+
+            "(7, 6),\n"+
+            "(8, 5),\n"+
+            "(9, 4),\n"+
+            "(10, 3),\n"+
+            "(11, 2),\n"+
             "(12, 1);");
 
-        jdbcTemplate.update("INSERT INTO film_mpa\n" +
-            "VALUES (1, 1),\n" +
-            "(2, 2),\n" +
-            "(3, 3),\n" +
-            "(4, 3),\n" +
-            "(5, 4),\n" +
-            "(6, 3),\n" +
-            "(7, 5),\n" +
-            "(8, 5),\n" +
-            "(9, 5),\n" +
-            "(10, 5),\n" +
-            "(11, 4),\n" +
+        jdbcTemplate.update("INSERT INTO film_mpa\n"+
+            "VALUES (1, 1),\n"+
+            "(2, 2),\n"+
+            "(3, 3),\n"+
+            "(4, 3),\n"+
+            "(5, 4),\n"+
+            "(6, 3),\n"+
+            "(7, 5),\n"+
+            "(8, 5),\n"+
+            "(9, 5),\n"+
+            "(10, 5),\n"+
+            "(11, 4),\n"+
             "(12, 3);");
 
-        jdbcTemplate.update("INSERT INTO friends (user_id_from, user_id_to)\n" +
-            "VALUES (1, 2),\n" +
-            "(2, 3),\n" +
-            "(3, 2),\n" +
-            "(3, 4),\n" +
-            "(4, 5),\n" +
-            "(5, 6),\n" +
-            "(6, 5),\n" +
-            "(2, 7),\n" +
-            "(7, 8),\n" +
-            "(8, 1),\n" +
-            "(7, 1),\n" +
-            "(6, 2),\n" +
-            "(4, 7),\n" +
+        jdbcTemplate.update("INSERT INTO friends (user_id_from, user_id_to)\n"+
+            "VALUES (1, 2),\n"+
+            "(2, 3),\n"+
+            "(3, 2),\n"+
+            "(3, 4),\n"+
+            "(4, 5),\n"+
+            "(5, 6),\n"+
+            "(6, 5),\n"+
+            "(2, 7),\n"+
+            "(7, 8),\n"+
+            "(8, 1),\n"+
+            "(7, 1),\n"+
+            "(6, 2),\n"+
+            "(4, 7),\n"+
             "(3, 1);");
 
-        jdbcTemplate.update("INSERT INTO likes\n" +
-            "VALUES (1, 1),\n" +
-            "(3, 1),\n" +
-            "(4, 1),\n" +
-            "(5, 2),\n" +
-            "(7, 3),\n" +
-            "(8, 4),\n" +
-            "(9, 5),\n" +
-            "(12, 5),\n" +
-            "(12, 6),\n" +
-            "(1, 7),\n" +
-            "(12, 8),\n" +
-            "(12, 3),\n" +
+        jdbcTemplate.update("INSERT INTO likes\n"+
+            "VALUES (1, 1),\n"+
+            "(3, 1),\n"+
+            "(4, 1),\n"+
+            "(5, 2),\n"+
+            "(7, 3),\n"+
+            "(8, 4),\n"+
+            "(9, 5),\n"+
+            "(12, 5),\n"+
+            "(12, 6),\n"+
+            "(1, 7),\n"+
+            "(12, 8),\n"+
+            "(12, 3),\n"+
             "(6, 7);");
 
     }
