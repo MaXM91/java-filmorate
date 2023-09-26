@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.validators.exceptions.WorkDBException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -19,28 +20,31 @@ public class GenreDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public Genre found(Integer id) {
-        try {
-            return jdbcTemplate.queryForObject("SELECT * FROM genre WHERE genre_id = ?",
-                (rs, rowNum) -> new Genre(rs.getInt("genre_id"), rs.getString("genre_name")), id);
-        } catch (EmptyResultDataAccessException exc) {
-            log.info("GenreDbStorage/found: problem of founding a genre with id - {}", id);
-            throw new ObjectNotFoundException("found genre: problems with founding a genre id - " + id);
-        } catch (DataAccessException exp) {
-            log.info("GenreDbStorage/found: DB problem of founding a genre with id - {}", id);
-            throw new WorkDBException("found genre: problems with DB on founding a genre id - " + id);
-        }
+        return giveGenre("SELECT * FROM genre WHERE genre_id = ?", id, "found").get(0);
     }
 
     public List<Genre> get() {
+        return giveGenre("SELECT * FROM genre GROUP BY genre_id", null, "get");
+    }
+
+    private List<Genre> giveGenre(String sql, Integer id, String type) {
         try {
-            return jdbcTemplate.query("SELECT * FROM genre GROUP BY genre_id",
-                (rs, rowNum) -> new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
+            if (id == null) {
+                return jdbcTemplate.query(sql,
+                    (rs, rowNum) -> new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
+            } else {
+                List<Genre> genreList = new ArrayList<>();
+                Genre genre = jdbcTemplate.queryForObject(sql,
+                        (rs, rowNum) -> new Genre(rs.getInt("genre_id"), rs.getString("genre_name")), id);
+                genreList.add(genre);
+                return genreList;
+            }
         } catch (EmptyResultDataAccessException exc) {
-            log.info("GenreDbStorage/get: problem with getting a genre");
-            throw new ObjectNotFoundException("found genre: problems with getting genre");
+                log.info("GenreDbStorage/" + type + ": ids- {}", id);
+                throw new ObjectNotFoundException(type + " genre: ids - " + id);
         } catch (DataAccessException exp) {
-            log.info("GenreDbStorage/get: DB problem of getting a genre");
-            throw new WorkDBException("found genre: problems with DB getting a genre");
+                log.info("GenreDbStorage/" + type + ": DB problem, ids - {}", id);
+                throw new WorkDBException(type + " genre:DB problem, ids - " + id);
         }
     }
 

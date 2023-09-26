@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.validators.exceptions.WorkDBException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -19,28 +20,32 @@ public class MpaDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public Mpa found(Integer id) {
-        try {
-            return jdbcTemplate.queryForObject("SELECT * FROM mpa WHERE mpa_id = ?",
-                (rs, rowNum) -> new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")), id);
-        } catch (EmptyResultDataAccessException exc) {
-            log.info("MpaDbStorage/found: DB problem of founding a mpa with id - {}", id);
-            throw new ObjectNotFoundException("found mpa: problems with founding a mpa id - " + id);
-        } catch (DataAccessException exp) {
-            log.info("MpaDbStorage/found: DB problem of founding a mpa with id - {}", id);
-            throw new WorkDBException("found mpa: problems with DB on founding a mpa id - " + id);
-        }
+        return giveMpa("SELECT * FROM mpa WHERE mpa_id = ?", id, "found").get(0);
     }
 
     public List<Mpa> get() {
+        return  giveMpa("SELECT * FROM mpa GROUP BY mpa_id", null, "get");
+    }
+
+    private List<Mpa> giveMpa(String sql, Integer id, String type) {
         try {
-            return jdbcTemplate.query("SELECT * FROM mpa GROUP BY mpa_id",
-                (rs, rowNum) -> new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")));
+            if (id == null) {
+                return jdbcTemplate.query(sql,
+                    (rs, rowNum) -> new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")));
+            } else {
+                List<Mpa> mpaList = new ArrayList<>();
+                Mpa mpa = jdbcTemplate.queryForObject(sql,
+                    (rs, rowNum) -> new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")), id);
+                mpaList.add(mpa);
+                return mpaList;
+            }
         } catch (EmptyResultDataAccessException exc) {
-            log.info("MpaDbStorage/get: problem with getting a mpa");
-            throw new ObjectNotFoundException("get mpa: problems with getting mpa");
+            log.info("MpaDbStorage/" + type + ": ids- {}", id);
+            throw new ObjectNotFoundException(type + " mpa: ids - " + id);
         } catch (DataAccessException exp) {
-            log.info("MpaDbStorage/found: DB problem of getting a mpa");
-            throw new WorkDBException("get mpa: problems with DB getting a mpa");
+            log.info("MpaDbStorage/" + type + ": DB problem, ids - {}", id);
+            throw new WorkDBException(type + " mpa:DB problem, ids - " + id);
         }
     }
+
 }

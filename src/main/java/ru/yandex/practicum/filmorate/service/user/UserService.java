@@ -27,54 +27,30 @@ public class UserService {
             throw new ValidationException("create user: user should not have an id!");
         }
 
-        if (user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        checkName(user);
 
-    return userStorage.create(user);
+        return userStorage.create(user);
     }
 
     public User update(User user) {
-        if (user.getId() <= 0) {
-            log.info("UserService/update: bad try update user with id - {}", user.getId());
-            throw new ValidationException("update user: user have bad id - " + user.getId() + "!");
-        }
+        checkIds(user.getId(), "update");
 
-        if (userStorage.found(user.getId()) == null) {
-            log.info("UserService/update: user id - {} not found", user.getId());
-            throw new ObjectNotFoundException("update user: user id - " + user.getId() + " not found!");
-        }
-
-        if (user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        checkName(user);
 
     return userStorage.update(user);
     }
 
     public User delete(Integer id) {
-        if (id == null || id <= 0) {
-            log.info("UserService/delete: user id - {} (null or <= 0)", id);
-            throw new ValidationException("delete user: user id - " + id + " null or <= 0");
-        }
-
-        if (userStorage.found(id) == null) {
-            log.info("UserService/update: user with id - {} not found!", id);
-            throw new ObjectNotFoundException("update user: user id - " + id + " not found!");
-        }
+        checkIds(id, "delete");
 
     return userStorage.delete(id);
     }
 
     public User found(Integer id) {
-        User user = userStorage.found(id);
-        if (user == null) {
-            log.info("UserService/found: user with id - {} not found!", id);
-            throw new ObjectNotFoundException("found user: user id - " + id + " not found!");
-        }
+        checkIds(id, "found");
 
         log.info("UserService/found: user with id - {} was found!", id);
-    return user;
+    return userStorage.found(id);
     }
 
     public List<User> getUsers() {
@@ -82,15 +58,7 @@ public class UserService {
     }
 
     public List<User> getFriends(Integer id) {
-        if (id == null || id <= 0) {
-            log.info("UserService/getFriends: user id - {} (null or <= 0)", id);
-            throw new ValidationException("getFriends user: user id - " + id + " null or <= 0");
-        }
-
-        if (userStorage.found(id) == null) {
-            log.info("UserService/getFriends: user with id - {} not found!", id);
-            throw new ObjectNotFoundException("getFriends user: user id - " + id + " not found!");
-        }
+        checkIds(id, "getFriends");
 
     return userStorage.getFriends(id);
     }
@@ -98,11 +66,14 @@ public class UserService {
     //Work with friend list of users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean addFriend(Integer id, Integer idFriend) {
+        if (userStorage.found(id) == null) {
+            log.info("UserService/addFriend: user id - {} not found", id);
+            throw new ObjectNotFoundException("addFriend user: user id - " + id + " not found!");
+        }
 
-        if (userStorage.found(id) == null || userStorage.found(idFriend) == null) {
-            log.info("UserService/addFriend: one or both from users {}, {} not found!", id, idFriend);
-            throw new ObjectNotFoundException("addFriend user: one or both from users ids - " + id + ", " + idFriend +
-                " not found!");
+        if (userStorage.found(idFriend) == null) {
+            log.info("UserService/addFriend: user id - {} not found", idFriend);
+            throw new ObjectNotFoundException("addFriend user: user id - " + idFriend + " not found!");
         }
 
         userStorage.addFriend(id, idFriend);
@@ -111,15 +82,14 @@ public class UserService {
     }
 
     public boolean deleteFriend(Integer id, Integer idFriend) {
-        if (id == null || id <= 0 || idFriend == null || idFriend <= 0) {
-            log.info("UserService/deleteFriends: bad id/ids of users - {}, {} (null or <= 0)", id, idFriend);
-            throw new ValidationException("deleteFriends user: user id - " + id + ", " + idFriend + " null or <= 0");
+        if (userStorage.found(id) == null) {
+            log.info("UserService/deleteFriend: user id - {} not found", id);
+            throw new ObjectNotFoundException("deleteFriend user: user id - " + id + " not found!");
         }
 
-        if (userStorage.found(id) == null || userStorage.found(idFriend) == null) {
-            log.info("UserService/deleteFriend: one or both from users {}, {} not found!", id, idFriend);
-            throw new ObjectNotFoundException("deleteFriend user: one or both from users ids - " + id + ", " + idFriend +
-                " not found!");
+        if (userStorage.found(idFriend) == null) {
+            log.info("UserService/deleteFriend: user id - {} not found", idFriend);
+            throw new ObjectNotFoundException("deleteFriend user: user id - " + idFriend + " not found!");
         }
 
         userStorage.deleteFriend(id, idFriend);
@@ -128,18 +98,28 @@ public class UserService {
     }
 
     public List<User> getMutualFriends(Integer id, Integer otherId) {
-
-        if (id == null || id <= 0 || otherId == null || otherId <= 0) {
-            log.info("UserService/getMutualFriends: bad id/ids of users - {}, {} (null or <= 0)", id, otherId);
-            throw new ValidationException("getMutualFriends user: user id - " + id + ", " + otherId + " null or <= 0");
-        }
-
-        if (userStorage.found(id) == null || userStorage.found(otherId) == null) {
-            log.info("UserService/getMutualFriends: one or both from users {}, {} not found!", id, otherId);
-            throw new ObjectNotFoundException("getMutualFriends user: one or both from users ids - " + id + ", " + otherId +
-                " not found!");
-        }
+        checkIds(id, "getMutualFriends");
+        checkIds(otherId, "getMutualFriends");
 
     return userStorage.getMutualFriends(id, otherId);
     }
+
+    private void checkIds(Integer id, String type) {
+        if (id <= 0) {
+            log.info("UserService/" + type + ": bad id - {}", id);
+            throw new ValidationException(type + " user: bad id - " + id);
+        }
+
+        if (userStorage.found(id) == null) {
+            log.info("UserService/" + type + ": user id - {} not found", id);
+            throw new ObjectNotFoundException(type + " user: user id - " + id + " not found!");
+        }
+    }
+
+    private void checkName(User user) {
+        if (user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+    }
+
 }

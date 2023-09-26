@@ -1,9 +1,12 @@
 package ru.yandex.practicum.filmorate.validators.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -29,6 +32,18 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)                          // 500
     public ErrorResponse badWorkDB(final WorkDBException exc) {
+        return new ErrorResponse(exc.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)                                    // 400
+    public ErrorResponse badSBValidationUpLevelController(final ConstraintViolationException exc) {
+        return new ErrorResponse(exc.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)                                    // 400
+    public ErrorResponse badSBValidationOnRequestBody(final MethodArgumentNotValidException exc) {
         return new ErrorResponse(exc.getMessage());
     }
 }

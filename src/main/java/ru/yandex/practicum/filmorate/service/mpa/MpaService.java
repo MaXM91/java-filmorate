@@ -19,4 +19,5 @@ public class MpaService {
     public List<Mpa> getAllMpa() {
         return mpaDbStorage.get();
     }
+
 }

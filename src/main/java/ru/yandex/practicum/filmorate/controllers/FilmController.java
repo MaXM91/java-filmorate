@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.service.like.LikeService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -13,14 +14,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmController {
     private final FilmService filmService;
+    private final LikeService likeService;
 
     @PostMapping
-    public Film addFilm(@RequestBody @Valid Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         return filmService.create(film);
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody @Valid Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         return filmService.update(film);
     }
 
@@ -41,12 +43,12 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public boolean addLike(@PathVariable Integer id, @PathVariable Integer userId) {
-        return filmService.addLike(id, userId);
+        return likeService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public boolean deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
-        return filmService.removeLike(id, userId);
+        return likeService.removeLike(id, userId);
     }
 
     @GetMapping("/popular")
