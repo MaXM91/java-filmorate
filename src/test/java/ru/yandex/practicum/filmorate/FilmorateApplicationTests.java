@@ -100,7 +100,7 @@ class FilmorateApplicationTests {
         LocalDate user1LocalDate = LocalDate.of(2016, 1, 22);
 
         Optional<User> userOptional = Optional.ofNullable(
-            userStorage.create(new User(0,null ,"777@bk.ru", "login777", "name777", user1LocalDate)));
+            userStorage.create(new User(0,null,"777@bk.ru", "login777", "name777", user1LocalDate)));
 
         assertThat(userOptional).isPresent().hasValueSatisfying(
             user -> assertThat(user).hasFieldOrPropertyWithValue("id", 10));
