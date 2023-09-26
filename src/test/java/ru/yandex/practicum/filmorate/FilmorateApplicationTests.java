@@ -100,7 +100,7 @@ class FilmorateApplicationTests {
         LocalDate user1LocalDate = LocalDate.of(2016, 1, 22);
 
         Optional<User> userOptional = Optional.ofNullable(
-            userStorage.create(new User(0, "777@bk.ru", "login777", "name777", user1LocalDate)));
+            userStorage.create(new User(0,null,"777@bk.ru", "login777", "name777", user1LocalDate)));
 
         assertThat(userOptional).isPresent().hasValueSatisfying(
             user -> assertThat(user).hasFieldOrPropertyWithValue("id", 10));
@@ -111,7 +111,7 @@ class FilmorateApplicationTests {
         LocalDate user1LocalDate = LocalDate.of(2016, 1, 22);
 
         Optional<User> userOptional = Optional.ofNullable(userStorage.update(
-            new User(1, "777update@bk.ru", "update777", "update777", user1LocalDate)));
+            new User(1, null, "777update@bk.ru", "update777", "update777", user1LocalDate)));
 
         assertThat(userOptional).isPresent().hasValueSatisfying(user -> {
             assertThat(user).hasFieldOrPropertyWithValue("id", 1);
@@ -128,7 +128,7 @@ class FilmorateApplicationTests {
 
         ObjectNotFoundException exc = assertThrows(ObjectNotFoundException.class,
             () -> userStorage.found(5));
-        assertEquals("UserService/found: user not found!", exc.getMessage());
+        assertEquals("found user: user with id - " + 5 + " not found!", exc.getMessage());
     }
 
     @Test
@@ -245,7 +245,7 @@ class FilmorateApplicationTests {
 
         ObjectNotFoundException exc = assertThrows(ObjectNotFoundException.class,
             () -> filmStorage.found(5));
-        assertEquals("FilmDbStorage/found: film not found!", exc.getMessage());
+        assertEquals("FilmDbStorage/found: film id - " + 5 + " not found!", exc.getMessage());
     }
 
     @Test

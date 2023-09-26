@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private static final HashMap<Integer, Film> films = new HashMap<>();
-    // Work with films
+// Work with films
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     private int filmId = 1;
 

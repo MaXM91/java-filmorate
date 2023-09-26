@@ -25,4 +25,10 @@ public class ErrorHandler {
     public ErrorResponse badWork(final Exception exc) {
         return new ErrorResponse(exc.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)                          // 500
+    public ErrorResponse badWorkDB(final WorkDBException exc) {
+        return new ErrorResponse(exc.getMessage());
+    }
 }
