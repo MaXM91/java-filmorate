@@ -36,7 +36,7 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getAllFilms() {
-        return filmService.get();
+        return filmService.getFilms();
     }
 
     @PutMapping("/{id}/like/{userId}")

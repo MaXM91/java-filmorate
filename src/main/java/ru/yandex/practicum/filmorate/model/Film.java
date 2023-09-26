@@ -1,26 +1,25 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.MinimumDate;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 public class Film {
     private static final LocalDate DATE_BIRTH_CINEMA = LocalDate.of(1895, 12, 25);
     private int id;
 
-    @NotBlank(message = "film: name is blank!")
-    @NotEmpty(message = "film: name is empty!")
+    @NotBlank(message = "film: name is blank/empty!")
     private String name;
 
-    @NotBlank(message = "film: description is blank")
-    @NotEmpty(message = "film: description is empty!")
+    @NotBlank(message = "film: description is blank/empty!")
     @Size(max = 200, message = "film: description contains more then 200 char!")
     private String description;
 
@@ -35,16 +34,4 @@ public class Film {
 
     @Positive(message = "film: duration has a negative value")
     private long duration;
-
-    public Film(int id, String name, String description, List<Genre> genres, Mpa mpa, Integer rate,
-        LocalDate releaseDate, long duration) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.genres = genres;
-        this.mpa = mpa;
-        this.rate = rate;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-    }
 }

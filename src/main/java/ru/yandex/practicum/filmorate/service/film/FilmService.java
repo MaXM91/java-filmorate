@@ -31,28 +31,37 @@ public class FilmService {
         this.likeService = likeService;
     }
 
-    public Film create(Film film) throws ValidationException {
+    public Film create(Film film) {
         if (film.getId() >= 1) {
-            log.info("Неудачная попытка создания фильма с ид {}", film.getId());
-            throw new ValidationException("create: film have id!");
+            log.info("FilmService/create: bad try create film with id - {}", film.getId());
+            throw new ValidationException("create film: film should not have an id!");
         }
 
         return filmStorage.create(film);
     }
 
-    public Film update(Film film) throws ObjectNotFoundException {
+    public Film update(Film film) {
+        if (film.getId() <= 0) {
+            log.info("FilmService/update: bad try update film with id - {}", film.getId());
+            throw new ValidationException("update film: film have bad id - " + film.getId() + "!");
+        }
+
         if (filmStorage.found(film.getId()) == null) {
-            log.info("При обновлении не найден фильм с ид {}", film.getId());
-            throw new ObjectNotFoundException("update: film not found!");
+            log.info("FilmService/update: film id - {} not found", film.getId());
+            throw new ObjectNotFoundException("update film: film id - " + film.getId() + " not found!");
         }
         return filmStorage.update(film);
     }
 
-    public Film delete(Integer id) throws ObjectNotFoundException {
+    public Film delete(Integer id) {
+        if (id == null || id <= 0) {
+            log.info("FilmService/delete: film id - {} (null or <= 0)", id);
+            throw new ValidationException("delete film: film id - " + id + " null or <= 0");
+        }
 
         if (filmStorage.found(id) == null) {
-            log.info("При удалении не найден фильм с ид {}", id);
-            throw new ObjectNotFoundException("FilmService/delete: film not found!");
+            log.info("FilmService/delete: film id - {} not found", id);
+            throw new ObjectNotFoundException("delete film: film id - " + id + " not found!");
         }
         return filmStorage.delete(id);
     }
@@ -60,43 +69,45 @@ public class FilmService {
     public Film getFilm(Integer id) {
 
         if (filmStorage.found(id) == null) {
-            log.info("При поиске не найден фильм с ид {}", id);
-            throw new ObjectNotFoundException("FilmService/getFilm: film not found!");
+            log.info("FilmService/getFilm: film with id - {} not found!", id);
+            throw new ObjectNotFoundException("getFilm film: film id - " + id + " not found!");
         }
+
+        log.info("FilmService/getFilm: film with id - {} was found!", id);
 
         return filmStorage.found(id);
     }
 
-    public List<Film> get() {
+    public List<Film> getFilms() {
         return filmStorage.get();
     }
 
-    // Work with likes
+// Work with likes
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    public boolean addLike(Integer filmId, Integer userId) throws ObjectNotFoundException {
+    public boolean addLike(Integer filmId, Integer userId) {
         if (filmStorage.found(filmId) == null) {
-            log.info("При добавлении лайка не найден фильм с ид {}", filmId);
-            throw new ObjectNotFoundException("film/addLike: film not found!");
+            log.info("FilmService/addLike: film id - {} not found!", filmId);
+            throw new ObjectNotFoundException("addLike film: film id - " + filmId + " not found!");
         }
 
         if (userService.found(userId) == null) {
-            log.info("При добавлении лайка не найден юзер с ид {}", userId);
-            throw new ObjectNotFoundException("film/addLike: user not found!");
+            log.info("FilmService/addLike: user id - {} not found!", userId);
+            throw new ObjectNotFoundException("addLike film: user id - " + userId + " not found!");
         }
 
         likeService.addLike(filmId, userId);
         return true;
     }
 
-    public boolean removeLike(Integer filmId, Integer userId) throws ObjectNotFoundException {
+    public boolean removeLike(Integer filmId, Integer userId) {
         if (filmStorage.found(filmId) == null) {
-            log.info("При удалении лайка не найден фильм с ид {}", filmId);
-            throw new ObjectNotFoundException("film/removeLike: film not found!");
+            log.info("FilmService/removeLike: film id - {} not found!", filmId);
+            throw new ObjectNotFoundException("removeLike film: film id - " + filmId + " not found!");
         }
 
         if (userService.found(userId) == null) {
-            log.info("При удалении лайка не найден юзер с ид {}", userId);
-            throw new ObjectNotFoundException("film/removeLike: user not found!");
+            log.info("FilmService/removeLike: user id - {} not found!", userId);
+            throw new ObjectNotFoundException("removeLike film: user id - " + userId + " not found!");
         }
 
         likeService.removeLike(filmId, userId);

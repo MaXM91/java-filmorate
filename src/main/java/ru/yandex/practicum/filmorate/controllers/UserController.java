@@ -41,7 +41,7 @@ public class UserController {
 
     @GetMapping
     public List<User> getAllUsers() {
-        return userService.get();
+        return userService.getUsers();
     }
 
     @PutMapping("/{id}/friends/{friendId}")

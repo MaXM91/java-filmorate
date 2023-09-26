@@ -1,4 +1,4 @@
-INSERT INTO public.genre (name)
+INSERT INTO public.genre (genre_name)
 VALUES ('Комедия'),
        ('Драма'),
        ('Мультфильм'),
@@ -6,7 +6,7 @@ VALUES ('Комедия'),
        ('Документальный'),
        ('Боевик');
 
-INSERT INTO public.mpa (name)
+INSERT INTO public.mpa (mpa_name)
 VALUES ('G'),
        ('PG'),
        ('PG-13'),
