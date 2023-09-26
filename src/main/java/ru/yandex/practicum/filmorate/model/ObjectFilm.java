@@ -1,13 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
+@AllArgsConstructor
 public class ObjectFilm {
-    private int id;
-
-    public ObjectFilm(int id) {
-        this.id = id;
-    }
-
+    private int filmId;
+    private List<Genre> genres;
+    private Mpa mpa;
 }

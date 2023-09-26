@@ -3,14 +3,12 @@ package ru.yandex.practicum.filmorate.storage.user;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private static final HashMap<Integer, User> users = new HashMap<>();
-    //Work with users
+private static final HashMap<Integer, User> users = new HashMap<>();
+//Work with users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     private int userId = 1;
 
@@ -47,13 +45,10 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getFriends(Integer id) {
         List<User> friends = new ArrayList<>();
 
-        if (users.get(id)
-            .getUserFriends()
-            .isEmpty()) {
+        if (users.get(id).getUserFriends().isEmpty()) {
             return null;
         }
-        for (Integer friendId : users.get(id)
-            .getUserFriends()) {
+        for (Integer friendId : users.get(id).getUserFriends()) {
             friends.add(users.get(friendId));
         }
         return friends;
@@ -64,32 +59,30 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
-    // Work with friends list
+// Work with friends list
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void addFriend(Integer id, Integer idFriend) {
-        users.get(id)
-            .setUserFriends(idFriend);
-        users.get(idFriend)
-            .setUserFriends(id);
+        Set<Integer> friends;
+        friends = users.get(id).getUserFriends();
+        friends.add(idFriend);
+        users.get(id).setUserFriends(friends);
+        friends = users.get(idFriend).getUserFriends();
+        friends.add(id);
+        users.get(idFriend).setUserFriends(friends);
     }
 
     @Override
     public void deleteFriend(Integer id, Integer idFriend) {
-        users.get(id)
-            .deleteUserFriends(idFriend);
-        users.get(idFriend)
-            .deleteUserFriends(id);
+        users.get(id).deleteUserFriends(idFriend);
+        users.get(idFriend).deleteUserFriends(id);
     }
 
     public List<User> getMutualFriends(Integer id, Integer otherId) {
         List<User> mutualFriends = new ArrayList<>();
 
-        for (Integer friendsId : users.get(id)
-            .getUserFriends()) {
-            if (users.get(otherId)
-                .getUserFriends()
-                .contains(friendsId)) {
+        for (Integer friendsId : users.get(id).getUserFriends()) {
+            if (users.get(otherId).getUserFriends().contains(friendsId)) {
                 mutualFriends.add(users.get(friendsId));
             }
         }
