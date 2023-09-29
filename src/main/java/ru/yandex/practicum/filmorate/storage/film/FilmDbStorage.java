@@ -82,10 +82,9 @@ public class FilmDbStorage implements FilmStorage {
             }
 
             if (film.getMpa() != null) {
-                jdbcTemplate.update("DELETE FROM film_mpa WHERE film_id = ?", film.getId());
                 changeMpa(film);
             } else {
-                jdbcTemplate.update("DELETE FROM film_mpa WHERE film_id = ?", film.getId());
+                jdbcTemplate.update("UPDATE films SET mpa_id = null WHERE id = ?", film.getId());
             }
 
             return film;
@@ -119,15 +118,14 @@ public class FilmDbStorage implements FilmStorage {
 
             SqlRowSet rs = jdbcTemplate.queryForRowSet(
                 "SELECT f.id, f.name, f.description, f.releasedate, f.duration, fg.genre_id, g.genre_name," +
-                    "fm.mpa_id, m.mpa_name, COUNT(DISTINCT l.user_id) AS likes\n" +
+                    "f.mpa_id, m.mpa_name, COUNT(DISTINCT l.user_id) AS likes\n" +
                     "FROM films AS f\n" +
                     "LEFT JOIN film_genre AS fg ON f.id = fg.film_id\n" +
                     "LEFT JOIN genre AS g ON fg.genre_id = g.genre_id\n" +
-                    "LEFT JOIN film_mpa AS fm ON f.id = fm.film_id\n" +
-                    "LEFT JOIN mpa AS m ON fm.mpa_id = m.mpa_id\n" +
+                    "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id\n" +
                     "LEFT JOIN likes AS l ON f.id = l.film_id\n" +
                     "WHERE f.id = ?\n" +
-                    "GROUP BY f.id , fg.genre_id, fm.mpa_id", id);
+                    "GROUP BY f.id , fg.genre_id, f.mpa_id", id);
 
             rs.next();
 
@@ -170,14 +168,13 @@ public class FilmDbStorage implements FilmStorage {
         try {
             SqlRowSet rs = jdbcTemplate.queryForRowSet(
                 "SELECT f.id, f.name, f.description, f.releasedate, f.duration, fg.genre_id, " +
-                    "g.genre_name, fm.mpa_id, m.mpa_name, COUNT(DISTINCT l.user_id) AS likes\n" +
+                    "g.genre_name, f.mpa_id, m.mpa_name, COUNT(DISTINCT l.user_id) AS likes\n" +
                     "FROM films AS f\n" +
                     "LEFT JOIN film_genre AS fg ON f.id = fg.film_id\n" +
                     "LEFT JOIN genre AS g ON fg.genre_id = g.genre_id\n" +
-                    "LEFT JOIN film_mpa AS fm ON f.id = fm.film_id\n" +
-                    "LEFT JOIN mpa AS m ON fm.mpa_id = m.mpa_id\n" +
+                    "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id\n" +
                     "LEFT JOIN likes AS l ON f.id = l.film_id\n" +
-                    "GROUP BY f.id , fg.genre_id, fm.mpa_id");
+                    "GROUP BY f.id , fg.genre_id, f.mpa_id");
 
             return createFilmsFromRows(rs);
         } catch (ArrayIndexOutOfBoundsException exp) {
@@ -191,22 +188,30 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> popularFilms(long count) {
         try {
+            List<Film> response;
+            int num = (int) count * 2;
+
             SqlRowSet rs = jdbcTemplate.queryForRowSet(
-                "SELECT f.id, f.name, f.description, f.releasedate, f.duration, fg.genre_id, " +
-                    "g.genre_name, fm.mpa_id, m.mpa_name, COUNT(l.user_id) AS rate, COUNT(DISTINCT l.user_id) AS " +
-                    "likes\n" +
+                "SELECT COUNT(l.user_id) AS likes, f.id, f.name, f.description, f.mpa_id, m.mpa_name, fg.genre_id,\n" +
+                    "g.genre_name, f.releaseDate, f.duration\n" +
                     "FROM films AS f\n" +
-                    "LEFT JOIN film_genre AS fg ON f.id = fg.film_id\n" +
+                    "LEFT JOIN likes AS l ON l.film_id = f.id\n" +
+                    "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id\n" +
+                    "LEFT JOIN film_genre AS fg ON fg.film_id = f.id\n" +
                     "LEFT JOIN genre AS g ON fg.genre_id = g.genre_id\n" +
-                    "LEFT JOIN film_mpa AS fm ON f.id = fm.film_id\n" +
-                    "LEFT JOIN mpa AS m ON fm.mpa_id = m.mpa_id\n" +
-                    "LEFT JOIN likes AS l ON f.ID = l.film_id\n" +
-                    "GROUP BY f.id\n" +
-                    "ORDER BY rate DESC\n" +
-                    "LIMIT ? ", (int) count);
+                    "GROUP BY f.id, fg.genre_id\n" +
+                    "ORDER BY likes DESC\n" +
+                    "LIMIT ?", num);
 
-            return createFilmsFromRows(rs);
+            response = createFilmsFromRows(rs);
 
+            if (response.size() == 0) {
+                return new ArrayList<>();
+            } else if (response.size() <= count || (response.size() == 1 && count == 1)) {
+                return response;
+            } else {
+                return new ArrayList<>(response.subList(0, (int) count));
+            }
         } catch (ArrayIndexOutOfBoundsException exp) {
             return new ArrayList<>();
         } catch (DataAccessException exc) {
@@ -239,7 +244,7 @@ public class FilmDbStorage implements FilmStorage {
 
     private void changeMpa(Film film) {
         try {
-            jdbcTemplate.update("INSERT INTO film_mpa (film_id, mpa_id) VALUES(?, ?)", film.getId(), film.getMpa().getId());
+            jdbcTemplate.update("UPDATE films SET mpa_id = ? WHERE id = ?", film.getMpa().getId(), film.getId());
         } catch (DataAccessException exc) {
             log.info("FilmDbStorage/changeMpa: DB problem with changeMpa, id - {}", film.getId());
             throw new WorkDBException("changeMpa: problems with changeMpa, id - " + film.getId());
@@ -248,6 +253,8 @@ public class FilmDbStorage implements FilmStorage {
 
     private List<Film> createFilmsFromRows(SqlRowSet rs) {
         Map<Integer, Film> films = new HashMap<>();
+        List<Integer> idsList = new ArrayList<>();
+        List<Film> filmsList = new ArrayList<>();
 
         rs.next();
 
@@ -288,10 +295,15 @@ public class FilmDbStorage implements FilmStorage {
                     Objects.requireNonNull(rs.getDate("releaseDate")).toLocalDate(),
                     rs.getInt("duration"));
                 films.put(rs.getInt("id"), film);
+                idsList.add(rs.getInt("id"));
             }
             rs.next();
         }
-        return new ArrayList<>(films.values());
-    }
 
+        for (Integer id : idsList) {
+            filmsList.add(films.get(id));
+        }
+
+        return filmsList;
+    }
 }

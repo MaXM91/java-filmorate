@@ -234,7 +234,7 @@ public class UserDbStorage implements UserStorage {
                     rs.getString("name"),
                     Objects.requireNonNull(rs.getDate("birthday")).toLocalDate());
 
-                users.put(rs.getInt("user_id_to"), user);
+                users.put(rs.getInt(id), user);
             }
             rs.next();
         }
