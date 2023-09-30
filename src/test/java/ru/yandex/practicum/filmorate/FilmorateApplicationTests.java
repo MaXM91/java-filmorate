@@ -274,7 +274,7 @@ class FilmorateApplicationTests {
         filmStorage.delete(5);
 
         Assertions.assertEquals(null, filmStorage.found(5), "Пользователь не найден");
-        
+
     }
 
     @Test
