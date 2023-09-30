@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.film;
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,50 +27,45 @@ public class FilmService {
 
     public Film create(Film film) {
         if (film.getId() >= 1) {
-            log.info("FilmService/create: bad try create film with id - {}", film.getId());
-            throw new ValidationException("create film: film should not have an id!");
+            throw new ValidationException(" film should not have an id!");
         }
 
         return filmStorage.create(film);
     }
 
     public Film update(Film film) {
-        checkIds(film.getId(), "update");
+        checkIds(film.getId());
 
         return filmStorage.update(film);
     }
 
     public Film delete(Integer id) {
-        checkIds(id, "delete");
+        checkIds(id);
 
         return filmStorage.delete(id);
     }
 
     public Film getFilm(Integer id) {
-        checkIds(id, "getFilm");
-
-        log.info("FilmService/getFilm: film with id - {} was found!", id);
+        checkIds(id);
 
         return filmStorage.found(id);
     }
 
     public List<Film> getFilms() {
-        return filmStorage.get();
+        return filmStorage.getAll();
     }
 
     public List<Film> popularFilms(long count) {
         return filmStorage.popularFilms(count);
     }
 
-    private void checkIds(Integer id, String methodName) {
+    private void checkIds(Integer id) {
         if (id <= 0) {
-            log.info("FilmService/" + methodName + ": bad id - {}", id);
-            throw new ValidationException(methodName + " film: bad id - " + id + "!");
+            throw new ValidationException(" film bad id - " + id);
         }
 
         if (filmStorage.found(id) == null) {
-            log.info("FilmService/" + methodName + ": id - {} not found", id);
-            throw new ObjectNotFoundException(methodName + " film: film id - " + id + " not found!");
+            throw new ObjectNotFoundException(" film id - " + id + " not found");
         }
     }
 }

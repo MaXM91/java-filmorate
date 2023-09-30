@@ -47,7 +47,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> get() {
+    public List<Film> getAll() {
         return new ArrayList<>(films.values());
     }
 
@@ -58,7 +58,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationException("FilmService/popularFilms: bad count");
         }
 
-        return get().stream()
+        return getAll().stream()
             .sorted((s1, s2) -> Integer.compare(s2.getRate(), s1.getRate()))
             .limit(count)
             .collect(Collectors.toList());

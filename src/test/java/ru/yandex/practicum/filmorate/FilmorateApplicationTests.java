@@ -14,9 +14,9 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
-import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
-import ru.yandex.practicum.filmorate.storage.mpa.MpaDbStorage;
+import ru.yandex.practicum.filmorate.storage.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.LikeDbStorage;
+import ru.yandex.practicum.filmorate.storage.MpaDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 
@@ -158,7 +158,7 @@ class FilmorateApplicationTests {
 
         ObjectNotFoundException exc = assertThrows(ObjectNotFoundException.class,
             () -> userStorage.found(5));
-        assertEquals("found user: user with id - " + 5 + " not found!", exc.getMessage());
+        assertEquals(" user with id - 5 not found!", exc.getMessage());
     }
 
     @Test
@@ -300,7 +300,7 @@ class FilmorateApplicationTests {
 
     @Test
     public void testGetFilm() {
-        Optional<List<Film>> filmOptional = Optional.ofNullable(filmStorage.get());
+        Optional<List<Film>> filmOptional = Optional.ofNullable(filmStorage.getAll());
 
         if (filmOptional.isPresent()) {
             Assertions.assertEquals(12, filmOptional.get().size(),

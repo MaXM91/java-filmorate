@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.user;
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,8 +23,7 @@ public class UserService {
 
     public User create(User user) {
         if (user.getId() >= 1) {
-            log.info("UserService/create: bad try create user with id - {}", user.getId());
-            throw new ValidationException("create user: user should not have an id!");
+            throw new ValidationException(" user should not have an id!");
         }
 
         checkName(user);
@@ -33,23 +32,27 @@ public class UserService {
     }
 
     public User update(User user) {
-        checkIds(user.getId(), "update");
-
+        foundObject(user.getId());
         checkName(user);
+
+        log.info("UserService/update: user with id - {} updated!", user.getId());
 
     return userStorage.update(user);
     }
 
     public User delete(Integer id) {
-        checkIds(id, "delete");
+        foundObject(id);
+
+        log.info("UserService/delete: user with id - {} deleted!", id);
 
     return userStorage.delete(id);
     }
 
     public User found(Integer id) {
-        checkIds(id, "found");
+        foundObject(id);
 
-        log.info("UserService/found: user with id - {} was found!", id);
+        log.info("UserService/found: user with id - {} founded!", id);
+
     return userStorage.found(id);
     }
 
@@ -58,7 +61,7 @@ public class UserService {
     }
 
     public List<User> getFriends(Integer id) {
-        checkIds(id, "getFriends");
+        foundObject(id);
 
     return userStorage.getFriends(id);
     }
@@ -66,46 +69,37 @@ public class UserService {
     //Work with friend list of users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean addFriend(Integer id, Integer idFriend) {
-
-        foundObject(id, "addFriend");
-
-        foundObject(idFriend, "addFriend");
+        foundObject(id);
+        foundObject(idFriend);
 
         userStorage.addFriend(id, idFriend);
+
+        log.info("UserService/addFriend: user with id - {} add friend id - {}", id, idFriend);
 
     return true;
     }
 
     public boolean deleteFriend(Integer id, Integer idFriend) {
-        foundObject(id, "deleteFriend");
-
-        foundObject(idFriend, "deleteFriend");
+        foundObject(id);
+        foundObject(idFriend);
 
         userStorage.deleteFriend(id, idFriend);
+
+        log.info("UserService/deleteFriend: user with id - {} delete friend id - {}", id, idFriend);
 
     return true;
     }
 
     public List<User> getMutualFriends(Integer id, Integer otherId) {
-        checkIds(id, "getMutualFriends");
-        checkIds(otherId, "getMutualFriends");
+        foundObject(id);
+        foundObject(otherId);
 
     return userStorage.getMutualFriends(id, otherId);
     }
 
-    private void checkIds(Integer id, String methodName) {
-        if (id <= 0) {
-            log.info("UserService/" + methodName + ": bad id - {}", id);
-            throw new ValidationException(methodName + " user: bad id - " + id);
-        }
-
-        foundObject(id, methodName);
-    }
-
-    private void foundObject(Integer id, String methodName) {
+    private void foundObject(Integer id) {
         if (userStorage.found(id) == null) {
-            log.info("UserService/" + methodName + ": user id - {} not found", id);
-            throw new ObjectNotFoundException(methodName + " user: user id - " + id + " not found!");
+            throw new ObjectNotFoundException(" user id - " + id + " not found!");
         }
     }
 
