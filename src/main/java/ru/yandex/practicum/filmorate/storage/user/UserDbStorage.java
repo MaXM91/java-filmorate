@@ -193,15 +193,12 @@ public class UserDbStorage implements UserStorage {
     public List<User> getMutualFriends(Integer id, Integer otherId) {
         try {
             SqlRowSet rs = jdbcTemplate.queryForRowSet(
-                ("SELECT f.user_id_to, u.email, u.login, u.name, u.birthday, friends.user_id_to\n" +
+                ("SELECT f.user_id_to, u.email, u.login, u.name, u.birthday, fri.user_id_to\n" +
                     "FROM friends AS f\n" +
-                    "LEFT JOIN users AS u ON f.user_id_to = u.id\n" +
-                    "LEFT JOIN friends ON u.id = friends.user_id_from\n" +
-                    "WHERE f.user_id_from = ? AND f.user_id_to IN (SELECT user_id_to\n" +
-                    "                                              FROM friends \n" +
-                    "                                              WHERE user_id_from = ?\n" +
-                    "                                              ) \n" +
-                    "GROUP BY f.user_id_to, u.email, u.login, u.name, u.birthday, friends.user_id_to"), id, otherId);
+                    "LEFT JOIN users AS u ON u.id = f.user_id_to\n" +
+                    "LEFT JOIN friends AS fr ON f.user_id_to = fr.user_id_to \n" +
+                    "LEFT JOIN friends AS fri ON f.user_id_to = fri.user_id_from\n" +
+                    "WHERE f.user_id_from = ? AND fr.user_id_from = ?"), id, otherId);
 
             List<User> users = creatUsersFromRows(rs, "user_id_to");
 

@@ -66,15 +66,10 @@ public class UserService {
     //Work with friend list of users
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean addFriend(Integer id, Integer idFriend) {
-        if (userStorage.found(id) == null) {
-            log.info("UserService/addFriend: user id - {} not found", id);
-            throw new ObjectNotFoundException("addFriend user: user id - " + id + " not found!");
-        }
 
-        if (userStorage.found(idFriend) == null) {
-            log.info("UserService/addFriend: user id - {} not found", idFriend);
-            throw new ObjectNotFoundException("addFriend user: user id - " + idFriend + " not found!");
-        }
+        foundObject(id, "addFriend");
+
+        foundObject(idFriend, "addFriend");
 
         userStorage.addFriend(id, idFriend);
 
@@ -82,15 +77,9 @@ public class UserService {
     }
 
     public boolean deleteFriend(Integer id, Integer idFriend) {
-        if (userStorage.found(id) == null) {
-            log.info("UserService/deleteFriend: user id - {} not found", id);
-            throw new ObjectNotFoundException("deleteFriend user: user id - " + id + " not found!");
-        }
+        foundObject(id, "deleteFriend");
 
-        if (userStorage.found(idFriend) == null) {
-            log.info("UserService/deleteFriend: user id - {} not found", idFriend);
-            throw new ObjectNotFoundException("deleteFriend user: user id - " + idFriend + " not found!");
-        }
+        foundObject(idFriend, "deleteFriend");
 
         userStorage.deleteFriend(id, idFriend);
 
@@ -104,15 +93,19 @@ public class UserService {
     return userStorage.getMutualFriends(id, otherId);
     }
 
-    private void checkIds(Integer id, String type) {
+    private void checkIds(Integer id, String methodName) {
         if (id <= 0) {
-            log.info("UserService/" + type + ": bad id - {}", id);
-            throw new ValidationException(type + " user: bad id - " + id);
+            log.info("UserService/" + methodName + ": bad id - {}", id);
+            throw new ValidationException(methodName + " user: bad id - " + id);
         }
 
+        foundObject(id, methodName);
+    }
+
+    private void foundObject(Integer id, String methodName) {
         if (userStorage.found(id) == null) {
-            log.info("UserService/" + type + ": user id - {} not found", id);
-            throw new ObjectNotFoundException(type + " user: user id - " + id + " not found!");
+            log.info("UserService/" + methodName + ": user id - {} not found", id);
+            throw new ObjectNotFoundException(methodName + " user: user id - " + id + " not found!");
         }
     }
 

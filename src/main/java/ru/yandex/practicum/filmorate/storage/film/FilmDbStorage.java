@@ -113,11 +113,9 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film found(Integer id) {
         try {
-            List<Genre> genres = new ArrayList<>();
-            Mpa mpa;
 
             SqlRowSet rs = jdbcTemplate.queryForRowSet(
-                "SELECT f.id, f.name, f.description, f.releasedate, f.duration, fg.genre_id, g.genre_name," +
+                "SELECT f.id, f.name, f.description, f.releaseDate, f.duration, fg.genre_id, g.genre_name," +
                     "f.mpa_id, m.mpa_name, COUNT(DISTINCT l.user_id) AS likes\n" +
                     "FROM films AS f\n" +
                     "LEFT JOIN film_genre AS fg ON f.id = fg.film_id\n" +
@@ -127,33 +125,13 @@ public class FilmDbStorage implements FilmStorage {
                     "WHERE f.id = ?\n" +
                     "GROUP BY f.id , fg.genre_id, f.mpa_id", id);
 
-            rs.next();
+            List<Film> response = createFilmsFromRows(rs);
 
-            for (int i = 0; i < rs.getRow(); i++) {
-                if (rs.getString("genre_name") == null || rs.getInt("genre_id") == 0) {
-                    genres = new ArrayList<>();
-                } else {
-                    genres.add(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
-                }
-                rs.next();
+            if (response.size() == 0) {
+                return null;
             }
 
-            rs.previous();
-
-            if (rs.getString("mpa_name") == null || rs.getInt("mpa_id") == 0) {
-                mpa = null;
-            } else {
-                mpa = new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name"));
-            }
-
-            return new Film(rs.getInt("id"),
-                rs.getString("name"),
-                rs.getString("description"),
-                genres,
-                mpa,
-                rs.getInt("likes"),
-                Objects.requireNonNull(rs.getDate("releaseDate")).toLocalDate(),
-                rs.getInt("duration"));
+            return response.get(0);
         } catch (ArrayIndexOutOfBoundsException exp) {
             log.info("FilmDbStorage/found: DB problem of founding a film with id - {}", id);
             throw new ObjectNotFoundException("FilmDbStorage/found: film id - " + id + " not found!");
