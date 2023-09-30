@@ -30,25 +30,25 @@ public class LikeService {
         return true;
     }
 
-    private void checkIds(Integer filmId, Integer userId, String type) {
+    private void checkIds(Integer filmId, Integer userId, String methodName) {
         if (filmId <= 0) {
-            log.info("LikeService/" + type + ": film id - {} not found!", filmId);
-            throw new ObjectNotFoundException(type + " like: film id - " + filmId + " not found!");
+            log.info("LikeService/" + methodName + ": film id - {} not found!", filmId);
+            throw new ObjectNotFoundException(methodName + " like: film id - " + filmId + " not found!");
         }
 
         if (userId <= 0) {
-            log.info("LikeService/" + type + ": film id - {} not found!", filmId);
-            throw new ObjectNotFoundException(type + " like: film id - " + filmId + " not found!");
+            log.info("LikeService/" + methodName + ": film id - {} not found!", filmId);
+            throw new ObjectNotFoundException(methodName + " like: film id - " + filmId + " not found!");
         }
 
         if (filmService.getFilm(filmId) == null) {
-            log.info("LikeService/" + type + ": film id - {} not found!", filmId);
-            throw new ObjectNotFoundException(type + " like: film id - " + filmId + " not found!");
+            log.info("LikeService/" + methodName + ": film id - {} not found!", filmId);
+            throw new ObjectNotFoundException(methodName + " like: film id - " + filmId + " not found!");
         }
 
         if (userService.found(userId) == null) {
-            log.info("LikeService/" + type + ": user id - {} not found!", userId);
-            throw new ObjectNotFoundException(type + " like: user id - " + userId + " not found!");
+            log.info("LikeService/" + methodName + ": user id - {} not found!", userId);
+            throw new ObjectNotFoundException(methodName + " like: user id - " + userId + " not found!");
         }
     }
 

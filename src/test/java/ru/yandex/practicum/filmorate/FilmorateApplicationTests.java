@@ -273,9 +273,8 @@ class FilmorateApplicationTests {
     public void testDeleteFilm() {
         filmStorage.delete(5);
 
-        ObjectNotFoundException exc = assertThrows(ObjectNotFoundException.class,
-            () -> filmStorage.found(5));
-        assertEquals("FilmDbStorage/found: film id - " + 5 + " not found!", exc.getMessage());
+        Assertions.assertEquals(null, filmStorage.found(5), "Пользователь не найден");
+        
     }
 
     @Test

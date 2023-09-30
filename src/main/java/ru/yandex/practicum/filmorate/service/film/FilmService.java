@@ -62,15 +62,15 @@ public class FilmService {
         return filmStorage.popularFilms(count);
     }
 
-    private void checkIds(Integer id, String type) {
+    private void checkIds(Integer id, String methodName) {
         if (id <= 0) {
-            log.info("FilmService/" + type + ": bad id - {}", id);
-            throw new ValidationException(type + " film: bad id - " + id + "!");
+            log.info("FilmService/" + methodName + ": bad id - {}", id);
+            throw new ValidationException(methodName + " film: bad id - " + id + "!");
         }
 
         if (filmStorage.found(id) == null) {
-            log.info("FilmService/" + type + ": id - {} not found", id);
-            throw new ObjectNotFoundException(type + " film: film id - " + id + " not found!");
+            log.info("FilmService/" + methodName + ": id - {} not found", id);
+            throw new ObjectNotFoundException(methodName + " film: film id - " + id + " not found!");
         }
     }
 }
