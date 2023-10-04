@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -110,7 +111,7 @@ public class FilmDbStorage implements FilmStorage {
             List<Film> response = createFilmsFromRows(rs,  checkNumberRows(rs));
 
             if (response.size() == 0) {
-                return null;
+                throw new ObjectNotFoundException(" film id - " + id + " not found");
             }
 
             log.info("FilmService/getFilm: film with id - {} founded!", id);

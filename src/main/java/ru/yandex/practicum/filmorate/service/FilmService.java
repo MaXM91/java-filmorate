@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.validators.exceptions.ValidationException;
 
 import java.util.List;
@@ -64,8 +63,6 @@ public class FilmService {
             throw new ValidationException(" film bad id - " + id);
         }
 
-        if (filmStorage.found(id) == null) {
-            throw new ObjectNotFoundException(" film id - " + id + " not found");
-        }
+        filmStorage.found(id);
     }
 }

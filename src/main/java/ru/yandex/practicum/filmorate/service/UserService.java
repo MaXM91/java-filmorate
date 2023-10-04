@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
-import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.validators.exceptions.ValidationException;
 
 import java.util.List;
@@ -98,9 +97,7 @@ public class UserService {
     }
 
     private void foundObject(Integer id) {
-        if (userStorage.found(id) == null) {
-            throw new ObjectNotFoundException(" user id - " + id + " not found!");
-        }
+        userStorage.found(id);
     }
 
     private void checkName(User user) {
