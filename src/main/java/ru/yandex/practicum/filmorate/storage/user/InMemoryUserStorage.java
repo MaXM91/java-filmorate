@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 
 import java.util.*;
 
@@ -36,9 +37,9 @@ private static final HashMap<Integer, User> users = new HashMap<>();
     public User found(Integer id) {
         if (users.containsKey(id)) {
             return users.get(id);
+        } else {
+            throw new ObjectNotFoundException(" user with id - " + id + " not found!");
         }
-
-        return null;
     }
 
     @Override

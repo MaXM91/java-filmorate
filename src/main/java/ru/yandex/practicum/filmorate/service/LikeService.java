@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.storage.LikeDbStorage;
-import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
 
 @Slf4j
 @Service
@@ -33,12 +32,7 @@ public class LikeService {
     }
 
     private void checkIds(Integer filmId, Integer userId) {
-        if (filmService.getFilm(filmId) == null) {
-            throw new ObjectNotFoundException("film id - " + filmId + " not found!");
-        }
-
-        if (userService.found(userId) == null) {
-            throw new ObjectNotFoundException("user id - " + userId + " not found!");
-        }
+       filmService.getFilm(filmId);
+       userService.found(userId);
     }
 }
