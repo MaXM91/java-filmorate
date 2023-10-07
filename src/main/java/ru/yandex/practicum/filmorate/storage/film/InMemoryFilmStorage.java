@@ -3,18 +3,21 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.validators.exceptions.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.validators.exceptions.ValidationException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-// Work with films
+    private static final HashMap<Integer, Film> films = new HashMap<>();
+    // Work with films
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     private int filmId = 1;
-    private static final HashMap<Integer, Film> films = new HashMap<>();
 
     @Override
     public Film create(Film film) {
@@ -40,12 +43,39 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film found(Integer id) {
         if (films.containsKey(id)) {
             return films.get(id);
+        } else {
+            throw new ObjectNotFoundException(" film id - " + id + " not found");
         }
-        return null;
     }
 
     @Override
-    public List<Film> get() {
+    public List<Film> getAll() {
         return new ArrayList<>(films.values());
     }
+
+    @Override
+    public List<Film> popularFilms(long count) {
+        if (count <= 0) {
+            log.info("При выводе популярных фильмов не верное значение count {}", count);
+            throw new ValidationException("FilmService/popularFilms: bad count");
+        }
+
+        return getAll().stream()
+            .sorted((s1, s2) -> Integer.compare(s2.getRate(), s1.getRate()))
+            .limit(count)
+            .collect(Collectors.toList());
+    }
+
+    public void addLike(Integer filmId, Integer userId) {
+        films.get(filmId)
+            .setRate(films.get(filmId)
+                .getRate() + 1);
+    }
+
+    public void removeLike(Integer filmId, Integer userId) {
+        films.get(filmId)
+            .setRate(films.get(filmId)
+                .getRate() - 1);
+    }
+
 }
