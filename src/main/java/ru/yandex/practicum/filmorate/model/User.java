@@ -1,26 +1,22 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
+@AllArgsConstructor
 public class User {
-
     private int id;
-
-    private Set<Integer> userFriends = new HashSet<>();
+    private Set<Integer> userFriends;
 
     @Email(message = "user: bad mail")
     private String email;
 
-    @NotEmpty(message = "user: login is empty!")
-    @NotBlank(message = "user: login is blank!")
+    @NotBlank(message = "user: login is blank/empty!")
     @Pattern(regexp = "\\S*", message = "user: incorrect login!")
     private String login;
 
@@ -29,16 +25,7 @@ public class User {
     @PastOrPresent(message = "user: bad data of birthday!")
     private LocalDate birthday;
 
-    public void setUserFriends(Integer id) {
-        userFriends.add(id);
+    public void deleteUserFriends(Integer idFriend) {
+        userFriends.remove(idFriend);
     }
-
-    public List<Integer> getUserFriends() {
-        return new ArrayList<>(userFriends);
-    }
-
-    public void deleteUserFriends(Integer id) {
-        userFriends.remove(id);
-    }
-
 }
